@@ -1,0 +1,32 @@
+name: readlog
+version: 0.1.0.0
+license: BSD-3-Clause
+author: Davi
+maintainer: Davi
+copyright: 2026 Davi
+
+dependencies:
+  - base >= 4.7 && < 5
+  - time
+  - sqlite-simple
+  - scotty
+  - wai-extra
+  - text
+  - aeson
+  - http-conduit
+  - http-types
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - Functions
+    - APICalls
+  ghc-options: -Wall
+
+executables:
+  readlog-exe:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - readlog
+    ghc-options: -Wall
