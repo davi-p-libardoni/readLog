@@ -2,7 +2,7 @@
 module Main where
 
 import Web.Scotty
-import Database.SQLite.Simple
+import Database.PostgreSQL.Simple
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Functions
 import APICalls (searchBooks)
@@ -10,17 +10,17 @@ import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import qualified Data.Text.Lazy as TL
 import Control.Monad.IO.Class (liftIO)
-import Network.HTTP.Types.Status (status502)
+import qualified Data.ByteString.Char8 as BS
 
 -- Initialize database
 initDB :: Connection -> IO ()
 initDB conn = execute_ conn
   "CREATE TABLE IF NOT EXISTS books \
-  \ (id INTEGER PRIMARY KEY AUTOINCREMENT, \
+  \ (id SERIAL PRIMARY KEY, \
   \  name TEXT NOT NULL, \
   \  author TEXT NOT NULL, \
   \  release_date INTEGER, \
-  \  read_date TEXT, \
+  \  read_date DATE, \
   \  genre TEXT, \
   \  rating REAL)"
 
@@ -40,7 +40,9 @@ main = do
   mPort <- lookupEnv "PORT"
   let port = maybe 3000 id (mPort >>= readMaybe)
 
-  conn <- open "books.db"
+  mDbUrl <- lookupEnv "DATABASE_URL"
+  dbUrl <- maybe (fail "DATABASE_URL is not set") (pure . BS.pack) mDbUrl
+  conn <- connectPostgreSQL dbUrl
   initDB conn
 
   scotty port $ do

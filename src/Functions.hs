@@ -3,7 +3,7 @@ module Functions (Book(..), filterByAuthor, filterByGenre, filterByRating, order
 import Data.List
 import Data.Ord
 import Data.Time
-import Database.SQLite.Simple (ToRow(..), FromRow(..), field, toRow)
+import Database.PostgreSQL.Simple (ToRow(..), FromRow(..), field, toRow)
 
 data Book = Book { 
  bookId :: Int,
