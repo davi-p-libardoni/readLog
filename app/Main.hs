@@ -48,7 +48,8 @@ main = do
   scotty port $ do
     middleware logStdoutDev
 
-    
+    get "/" $ do
+      file "static/index.html"
 
     get "/book/search/:name" $ do
       n <- (param "name" :: ActionM TL.Text)
