@@ -32,3 +32,12 @@ executables:
     dependencies:
       - readlog
     ghc-options: -Wall
+
+tests:
+  readlog-test:
+    main: Test.hs
+    source-dirs: teste_unitario
+    dependencies:
+      - readlog
+      - HUnit
+    ghc-options: -Wall

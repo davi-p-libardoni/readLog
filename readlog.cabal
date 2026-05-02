@@ -59,3 +59,28 @@ executable readlog-exe
     , time
     , wai-extra
   default-language: Haskell2010
+
+test-suite readlog-test
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  other-modules:
+      Paths_readlog
+  autogen-modules:
+      Paths_readlog
+  hs-source-dirs:
+      teste_unitario
+  ghc-options: -Wall
+  build-depends:
+      HUnit
+    , aeson
+    , base >=4.7 && <5
+    , bytestring
+    , http-conduit
+    , http-types
+    , postgresql-simple
+    , readlog
+    , scotty
+    , text
+    , time
+    , wai-extra
+  default-language: Haskell2010
