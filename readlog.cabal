@@ -16,6 +16,7 @@ library
   exposed-modules:
       Functions
       APICalls
+      DBAccess
   other-modules:
       Paths_readlog
   autogen-modules:
@@ -26,10 +27,11 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , http-conduit
     , http-types
+    , postgresql-simple
     , scotty
-    , sqlite-simple
     , text
     , time
     , wai-extra
@@ -47,11 +49,12 @@ executable readlog-exe
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , http-conduit
     , http-types
+    , postgresql-simple
     , readlog
     , scotty
-    , sqlite-simple
     , text
     , time
     , wai-extra

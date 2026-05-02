@@ -1,38 +1,18 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
+import Functions
+import APICalls (searchBooks)
+import DBAccess
+
 import Web.Scotty
 import Database.PostgreSQL.Simple
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
-import Functions
-import APICalls (searchBooks)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import qualified Data.Text.Lazy as TL
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.ByteString.Char8 as BS
-
--- Initialize database
-initDB :: Connection -> IO ()
-initDB conn = execute_ conn
-  "CREATE TABLE IF NOT EXISTS books \
-  \ (id SERIAL PRIMARY KEY, \
-  \  name TEXT NOT NULL, \
-  \  author TEXT NOT NULL, \
-  \  release_date INTEGER, \
-  \  read_date DATE, \
-  \  genre TEXT, \
-  \  rating REAL)"
-
-insertBook :: Connection -> Book -> IO ()
-insertBook conn book =
-  execute conn
-    "INSERT INTO books (name, author, release_date, read_date, genre, rating) VALUES (?, ?, ?, ?, ?, ?)"
-    (name book, author book, releaseDate book, readDate book, genre book, rating book)
-
-
-getBooks :: Connection -> IO [Book]
-getBooks conn = query_ conn "SELECT id, name, author, release_date, read_date, genre, rating FROM books"
 
 main :: IO ()
 main = do

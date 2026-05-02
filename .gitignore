@@ -1,0 +1,15 @@
+.stack-work/
+dist-newstyle/
+*.hi
+*.o
+*.dyn_hi
+*.dyn_o
+*.prof
+*.hp
+*.eventlog
+*.swp
+*.swo
+*.tmp
+*.log
+books.db
+.env

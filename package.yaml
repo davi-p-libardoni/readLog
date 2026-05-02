@@ -15,12 +15,14 @@ dependencies:
   - aeson
   - http-conduit
   - http-types
+  - bytestring
 
 library:
   source-dirs: src
   exposed-modules:
     - Functions
     - APICalls
+    - DBAccess
   ghc-options: -Wall
 
 executables:
