@@ -1,13 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import Functions
+import Functions (Book(..),BookInput(..))
 import APICalls (searchBooks)
 import DBAccess
 
 import Web.Scotty
 import Database.PostgreSQL.Simple
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
+import Network.Wai.Middleware.Static (staticPolicy, addBase)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import qualified Data.Text.Lazy as TL
@@ -23,17 +24,29 @@ main = do
   mDbUrl <- lookupEnv "DATABASE_URL"
   dbUrl <- maybe (fail "DATABASE_URL is not set") (pure . BS.pack) mDbUrl
   conn <- connectPostgreSQL dbUrl
-  initDB conn
+  _ <- initDB conn
 
   scotty port $ do
     middleware logStdoutDev
+    middleware (staticPolicy (addBase "static"))
 
     get "/" $ do
-      file "static/index.html"
+      file "static/readlog.html"
 
-    get "/book/search/:name" $ do
-      n <- (param "name" :: ActionM TL.Text)
-      result <- liftIO (searchBooks (TL.unpack n))
+    get "/books" $ do
+      books <- liftIO (getBooks conn)
+      json books
+
+    get "/book/search" $ do
+      q <- (param "q" :: ActionM TL.Text)
+      result <- liftIO (searchBooks (TL.unpack q))
       json result
+    
+    post "/book/add" $ do
+      book <- (jsonData :: ActionM BookInput)
+      _ <- liftIO (insertBook conn book)
+      json ("ok" :: TL.Text)
+    
+    
 
   close conn

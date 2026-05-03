@@ -1,5 +1,7 @@
-module Functions (Book(..), filterByAuthor, filterByGenre, filterByRating, orderByDateRead, filterByMonthRead, filterByYearRead, pagesByMonth, pagesByYear) where
+{-# LANGUAGE OverloadedStrings #-}
+module Functions (Book(..), BookInput(..), filterByAuthor, filterByGenre, filterByRating, orderByDateRead, filterByMonthRead, filterByYearRead, pagesByMonth, pagesByYear) where
 
+import Data.Aeson (FromJSON(..), ToJSON(..), object, withObject, (.:), (.=))
 import Data.List
 import Data.Ord
 import Data.Time
@@ -12,9 +14,21 @@ data Book = Book {
  author :: String, 
  releaseDate :: Int, 
  readDate :: Day,
+ status :: String,
  genre :: String,
  rating :: Double,
  pages :: Int
+} deriving (Show)
+
+data BookInput = BookInput {
+    inName :: String,
+    inAuthor :: String,
+    inReleaseDate :: Int,
+    inReadDate :: Day,
+    inStatus :: String,
+    inGenre :: String,
+    inRating :: Double,
+    inPages :: Int
 } deriving (Show)
 
 -- filtra por autor
@@ -62,8 +76,34 @@ pagesByYear books year = sum (map pages (filterByYearRead books year))
 
 -- conversão de row do banco de dados para o tipo Book
 instance FromRow Book where
-    fromRow = Book <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
+    fromRow = Book <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
 
 -- conversão do tipo Book para row do db
 instance ToRow Book where
-    toRow (Book bid n a r rd g rt pgs) = toRow (bid, n, a, r, rd, g, rt, pgs)
+    toRow (Book bid n a r rd s g rt pgs) = toRow (bid, n, a, r, rd, s, g, rt, pgs)
+
+instance ToJSON Book where
+    toJSON (Book bid n a r rd s g rt pgs) =
+        object
+            [ "bookId" .= bid
+            , "name" .= n
+            , "author" .= a
+            , "release_date" .= r
+            , "read_date" .= rd
+            , "status" .= s
+            , "genre" .= g
+            , "rating" .= rt
+            , "pages" .= pgs
+            ]
+
+instance FromJSON BookInput where
+    parseJSON = withObject "BookInput" $ \o ->
+        BookInput
+            <$> o .: "name"
+            <*> o .: "author"
+            <*> o .: "release_date"
+            <*> o .: "read_date"
+            <*> o .: "status"
+            <*> o .: "genre"
+            <*> o .: "rating"
+            <*> o .: "pages"

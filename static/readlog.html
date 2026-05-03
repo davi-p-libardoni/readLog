@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Readlog — Your Reading Life, Organized</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav__logo">read<span>log</span></a>
+
+  <div class="nav__search">
+    <span class="nav__search__icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="Search your library…" autocomplete="off" />
+  </div>
+
+  <div class="nav__actions">
+    <button class="btn btn--ghost" id="navDiscover">🔍 Discover</button>
+    <button class="btn btn--ghost" id="openSidebar">⇄ Sort</button>
+    <button class="btn btn--primary" id="openModal">+ Add Book</button>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">☽</button>
+  </div>
+</nav>
+
+<div id="libraryPage">
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__text">
+    <div class="hero__label" id="heroLabel">Currently Reading</div>
+    <h1 class="hero__title">
+      <em id="heroTitle">The Brothers Karamazov</em>
+    </h1>
+    <div class="hero__meta">
+      <span class="hero__meta__author" id="heroAuthor">Fyodor Dostoevsky</span>
+      <span class="hero__meta__sep">·</span>
+      <span id="heroMeta">Fiction · Classic</span>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="heroPageLabel">Pages: 796</span>
+        <span id="pct">52%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-bar__fill" id="heroProgress"></div>
+      </div>
+    </div>
+
+    <div class="hero__stats">
+      <div class="stat">
+        <span class="stat__num" id="daysLeft">18</span>
+        <span class="stat__lbl">Days Left</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" id="pagesPerDay">23</span>
+        <span class="stat__lbl">Pages / Day</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num" id="booksThisYear">7</span>
+        <span class="stat__lbl">Books This Year</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__cover">
+    <div class="cover-stack">
+      <div class="cover-card">
+        <div class="cover-card__deco"></div>
+        <div class="cover-card__inner">
+          <div class="cover-card__title" id="coverTitle1">Crime and Punishment</div>
+          <div class="cover-card__author" id="coverAuthor1">Dostoevsky</div>
+        </div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-card__deco"></div>
+        <div class="cover-card__inner">
+          <div class="cover-card__title" id="coverTitle2">The Idiot</div>
+          <div class="cover-card__author" id="coverAuthor2">Dostoevsky</div>
+        </div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-card__deco"></div>
+        <div class="cover-card__inner">
+          <div class="cover-card__title" id="coverTitle3">The Brothers Karamazov</div>
+          <div class="cover-card__author" id="coverAuthor3">Dostoevsky · 1880</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filter-chip active" data-filter="all">All</button>
+  <button class="filter-chip" data-filter="reading">Reading</button>
+  <button class="filter-chip" data-filter="planned">Planned</button>
+  <button class="filter-chip" data-filter="finished">Finished</button>
+  <button class="filter-chip" data-filter="dropped">Dropped</button>
+
+  <div class="filters__sort">
+    <span>Sort by</span>
+    <select id="sortSelect">
+      <option value="title">Title</option>
+      <option value="author">Author</option>
+      <option value="rating">Rating</option>
+      <option value="pages">Pages</option>
+    </select>
+  </div>
+</div>
+
+<!-- BOOK GRID -->
+<div class="grid-wrap">
+  <div class="grid" id="bookGrid"></div>
+</div>
+</div><!-- /#libraryPage -->
+
+<!-- DISCOVER PAGE -->
+<div id="discoverPage" style="display:none">
+  <div class="discover-hero">
+    <div class="discover-hero__inner">
+      <div class="discover-hero__eyebrow">Google Books</div>
+      <h2 class="discover-hero__title">Discover your next<br><em>great read</em></h2>
+      <p class="discover-hero__sub">Search millions of books and add them to your library in one click.</p>
+      <div class="discover-search-wrap">
+        <span class="discover-search-icon">⌕</span>
+        <input type="text" id="discoverInput" placeholder="Search by title, author, or ISBN…" autocomplete="off" />
+        <button class="btn btn--primary" id="discoverBtn">Search</button>
+      </div>
+    </div>
+  </div>
+  <div class="discover-body">
+    <div class="discover-placeholder" id="discoverPlaceholder">
+      <div class="discover-placeholder__icon">&#x1F4D6;</div>
+      <div class="discover-placeholder__text">Start typing to search the Google Books catalogue</div>
+    </div>
+    <div class="discover-spinner" id="discoverSpinner" style="display:none">
+      <div class="spinner"></div>
+      <span>Searching…</span>
+    </div>
+    <div class="discover-results" id="discoverResults" style="display:none"></div>
+  </div>
+</div>
+
+<!-- BOOK DETAIL OVERLAY -->
+<div class="overlay" id="detailOverlay">
+  <div class="modal modal--wide">
+    <div class="modal__header">
+      <span class="modal__title" id="detailTitle">Book Details</span>
+      <button class="modal__close" id="closeDetail">✕</button>
+    </div>
+    <div class="modal__body modal__body--row" id="detailBody"></div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="cancelDetail">Cancel</button>
+      <select id="detailStatus" class="status-select">
+        <option value="planned">Add as Planned</option>
+        <option value="reading">Add as Reading</option>
+        <option value="finished">Add as Finished</option>
+      </select>
+      <button class="btn btn--primary" id="confirmAddBook">+ Add to Library</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD BOOK MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal__header">
+      <span class="modal__title">Add a new book</span>
+      <button class="modal__close" id="closeModal">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="field">
+        <label>Title</label>
+        <input type="text" id="newTitle" placeholder="Book title…" />
+      </div>
+      <div class="field">
+        <label>Author</label>
+        <input type="text" id="newAuthor" placeholder="Author name…" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Status</label>
+          <select id="newStatus">
+            <option value="planned">Planned</option>
+            <option value="reading">Reading</option>
+            <option value="finished">Finished</option>
+            <option value="dropped">Dropped</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Pages</label>
+          <input type="number" id="newPages" placeholder="e.g. 320" min="1" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Genre</label>
+        <input type="text" id="newGenre" placeholder="Fiction, Fantasy, Non-fiction…" />
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="cancelModal">Cancel</button>
+      <button class="btn btn--primary" id="saveBook">Save Book</button>
+    </div>
+  </div>
+</div>
+
+<!-- SORT SIDEBAR -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar__title">
+    Filter & Sort
+    <button class="modal__close" id="closeSidebar">✕</button>
+  </div>
+
+  <div class="sidebar__section">
+    <h4>Genre</h4>
+    <div class="sidebar__option active" data-genre="all">
+      <span class="sidebar__option__dot" style="background:var(--ink3)"></span>All Genres
+    </div>
+    <div class="sidebar__option" data-genre="Fiction">
+      <span class="sidebar__option__dot" style="background:#3A6B8A"></span>Fiction
+    </div>
+    <div class="sidebar__option" data-genre="Classic">
+      <span class="sidebar__option__dot" style="background:#8B6B4A"></span>Classic
+    </div>
+    <div class="sidebar__option" data-genre="Fantasy">
+      <span class="sidebar__option__dot" style="background:#4A7C59"></span>Fantasy
+    </div>
+    <div class="sidebar__option" data-genre="Non-fiction">
+      <span class="sidebar__option__dot" style="background:#C8593A"></span>Non-fiction
+    </div>
+    <div class="sidebar__option" data-genre="Sci-fi">
+      <span class="sidebar__option__dot" style="background:#6B4A8B"></span>Sci-fi
+    </div>
+  </div>
+
+  <div class="sidebar__section">
+    <h4>Rating</h4>
+    <div class="sidebar__option" data-rating="5">⭐⭐⭐⭐⭐ &nbsp;5 stars</div>
+    <div class="sidebar__option" data-rating="4">⭐⭐⭐⭐ &nbsp;4+ stars</div>
+    <div class="sidebar__option" data-rating="3">⭐⭐⭐ &nbsp;3+ stars</div>
+    <div class="sidebar__option" data-rating="0">Any rating</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── DATA ────────────────────────────────────────────────── */
+const COLORS = [
+  'linear-gradient(135deg,#2A3A5A,#1A2A4A)',
+  'linear-gradient(135deg,#4A2A3A,#2A1A2A)',
+  'linear-gradient(135deg,#2A4A3A,#1A3A2A)',
+  'linear-gradient(135deg,#4A3A2A,#2A2A1A)',
+  'linear-gradient(135deg,#3A2A4A,#2A1A3A)',
+  'linear-gradient(135deg,#4A2A2A,#3A1A1A)',
+  'linear-gradient(135deg,#2A4A4A,#1A3A3A)',
+  'linear-gradient(135deg,#3A4A2A,#2A3A1A)',
+];
+
+let books = [];
+window._books = books;
+
+let nextId = 9;
+let activeFilter = 'all';
+let activeGenre  = 'all';
+let activeRating = 0;
+let searchQuery  = '';
+
+function computeProgress(status){
+  if (status === 'finished') return 100;
+  if (status === 'reading') return 50;
+  return 0;
+}
+
+function normalizeBook(b){
+  return {
+    id: b.bookId,
+    title: b.name,
+    author: b.author,
+    status: b.status || 'planned',
+    genre: b.genre || 'Other',
+    pages: b.pages || 0,
+    progress: computeProgress(b.status),
+    rating: Math.round(b.rating || 0),
+    releaseDate: b.release_date,
+    readDate: b.read_date
+  };
+}
+
+async function loadBooks(){
+  try {
+    const res = await fetch('/books');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    books = data.map(normalizeBook);
+    window._books = books;
+    renderBooks();
+    updateHero();
+  } catch (e) {
+    showToast('Failed to load books from server.');
+    books = [];
+    window._books = books;
+    renderBooks();
+    updateHero();
+  }
+}
+
+function todayIsoDate(){
+  return new Date().toISOString().slice(0, 10);
+}
+
+async function postBook(payload){
+  const res = await fetch('/book/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+}
+
+/* ─── RENDER ──────────────────────────────────────────────── */
+function statusLabel(s){
+  return {reading:'In Progress',planned:'Planned',finished:'Finished',dropped:'Dropped'}[s]||s;
+}
+function stars(n){
+  if(!n) return '<span style="color:var(--ink3);font-size:.75rem">Not rated</span>';
+  return '★'.repeat(n)+'☆'.repeat(5-n);
+}
+
+function renderBooks(){
+  const grid = document.getElementById('bookGrid');
+  let filtered = books.filter(b=>{
+    const matchFilter = activeFilter==='all' || b.status===activeFilter;
+    const matchGenre  = activeGenre==='all'  || b.genre===activeGenre;
+    const matchRating = b.rating>=activeRating;
+    const matchSearch = !searchQuery ||
+      b.title.toLowerCase().includes(searchQuery) ||
+      b.author.toLowerCase().includes(searchQuery);
+    return matchFilter && matchGenre && matchRating && matchSearch;
+  });
+
+  const sort = document.getElementById('sortSelect').value;
+  filtered.sort((a,b)=>{
+    if(sort==='rating') return b.rating - a.rating;
+    if(sort==='pages')  return b.pages  - a.pages;
+    if(sort==='author') return a.author.localeCompare(b.author);
+    return a.title.localeCompare(b.title);
+  });
+
+  if(!filtered.length){
+    grid.innerHTML = `<div class="empty"><div class="empty__icon">📚</div><div class="empty__text">No books match this filter.</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((b,i)=>{
+    const color = COLORS[b.id % COLORS.length];
+    const initial = b.title[0];
+    return `
+    <div class="book-card" data-id="${b.id}" style="animation-delay:${i*40}ms">
+      <div class="book-card__cover" style="background:${color}">${initial}</div>
+      <div class="book-card__body">
+        <span class="book-card__status status--${b.status}">${statusLabel(b.status)}</span>
+        <div class="book-card__title">${b.title}</div>
+        <div class="book-card__author">${b.author}</div>
+        ${b.status==='reading' ? `<div class="book-card__progress"><div class="book-card__progress__fill" style="width:${b.progress}%"></div></div>` : ''}
+      </div>
+      <div class="book-card__footer">
+        <div class="book-card__rating">${stars(b.rating)}</div>
+        <div class="book-card__pages">${b.pages} pp</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ─── HERO ───────────────────────────────────────────────── */
+function updateHero(){
+  const hero = books.find(b => b.status === 'reading') || books[0];
+  if (!hero) {
+    document.getElementById('heroLabel').textContent = 'Library';
+    document.getElementById('heroTitle').textContent = 'No books yet';
+    document.getElementById('heroAuthor').textContent = 'Add your first book';
+    document.getElementById('heroMeta').textContent = 'Start building your shelf';
+    document.getElementById('heroPageLabel').textContent = 'Pages: --';
+    document.getElementById('pct').textContent = '0%';
+    document.getElementById('heroProgress').style.width = '0%';
+    document.getElementById('daysLeft').textContent = '--';
+    document.getElementById('pagesPerDay').textContent = '--';
+    document.getElementById('booksThisYear').textContent = '0';
+    updateCoverStack([]);
+    return;
+  }
+
+  document.getElementById('heroLabel').textContent = hero.status === 'reading' ? 'Currently Reading' : 'Featured Book';
+  document.getElementById('heroTitle').textContent = hero.title;
+  document.getElementById('heroAuthor').textContent = hero.author;
+  const metaBits = [];
+  if (hero.genre) metaBits.push(hero.genre);
+  if (hero.releaseDate) metaBits.push(String(hero.releaseDate));
+  document.getElementById('heroMeta').textContent = metaBits.join(' · ') || 'Unknown';
+  document.getElementById('heroPageLabel').textContent = `Pages: ${hero.pages || '--'}`;
+
+  const pct = Math.max(0, Math.min(100, hero.progress || 0));
+  document.getElementById('pct').textContent = pct + '%';
+  const bar = document.getElementById('heroProgress');
+  bar.style.width = '0%';
+  setTimeout(()=>{ bar.style.width = pct + '%'; }, 150);
+
+  const year = new Date().getFullYear();
+  const booksThisYear = books.filter(b => b.readDate && new Date(b.readDate).getFullYear() === year).length;
+  document.getElementById('booksThisYear').textContent = String(booksThisYear);
+
+  if (hero.status === 'reading' && hero.pages) {
+    const pagesPerDay = Math.max(1, Math.round(hero.pages / 30));
+    document.getElementById('pagesPerDay').textContent = String(pagesPerDay);
+    document.getElementById('daysLeft').textContent = String(30);
+  } else {
+    document.getElementById('pagesPerDay').textContent = '--';
+    document.getElementById('daysLeft').textContent = '--';
+  }
+
+  updateCoverStack(books);
+}
+
+function updateCoverStack(list){
+  const slots = [
+    { title: 'coverTitle1', author: 'coverAuthor1' },
+    { title: 'coverTitle2', author: 'coverAuthor2' },
+    { title: 'coverTitle3', author: 'coverAuthor3' }
+  ];
+  slots.forEach((slot, i) => {
+    const b = list[i];
+    document.getElementById(slot.title).textContent = b ? b.title : '--';
+    const author = b ? b.author : '';
+    const year = b && b.releaseDate ? String(b.releaseDate) : '';
+    document.getElementById(slot.author).textContent = [author, year].filter(Boolean).join(' · ') || '--';
+  });
+}
+
+/* ─── FILTER CHIPS ────────────────────────────────────────── */
+document.querySelectorAll('.filter-chip').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderBooks();
+  });
+});
+
+/* ─── SEARCH ──────────────────────────────────────────────── */
+document.getElementById('searchInput').addEventListener('input', e=>{
+  searchQuery = e.target.value.toLowerCase().trim();
+  renderBooks();
+});
+
+/* ─── SORT ────────────────────────────────────────────────── */
+document.getElementById('sortSelect').addEventListener('change', renderBooks);
+
+/* ─── MODAL ──────────────────────────────────────────────── */
+const overlay = document.getElementById('overlay');
+function openModal(){ overlay.classList.add('open') }
+function closeModal(){
+  overlay.classList.remove('open');
+  ['newTitle','newAuthor','newPages','newGenre'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('newStatus').value='planned';
+}
+
+document.getElementById('openModal').addEventListener('click', openModal);
+document.getElementById('closeModal').addEventListener('click', closeModal);
+document.getElementById('cancelModal').addEventListener('click', closeModal);
+overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
+
+document.getElementById('saveBook').addEventListener('click', async ()=>{
+  const title  = document.getElementById('newTitle').value.trim();
+  const author = document.getElementById('newAuthor').value.trim();
+  const status = document.getElementById('newStatus').value;
+  const pages  = parseInt(document.getElementById('newPages').value)||0;
+  const genre  = document.getElementById('newGenre').value.trim()||'Other';
+
+  if(!title||!author){ showToast('Please fill in title and author.'); return; }
+
+  const payload = {
+    name: title,
+    author: author,
+    release_date: 0,
+    read_date: todayIsoDate(),
+    status: status,
+    genre: genre,
+    rating: 0,
+    pages: pages || 0
+  };
+
+  try {
+    await postBook(payload);
+    closeModal();
+    await loadBooks();
+    showToast(`"${title}" added to your library!`);
+  } catch (e) {
+    showToast('Failed to save book.');
+  }
+});
+
+/* ─── SIDEBAR ────────────────────────────────────────────── */
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+function openSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('open'); }
+function closeSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('open'); }
+
+document.getElementById('openSidebar').addEventListener('click', openSidebar);
+document.getElementById('closeSidebar').addEventListener('click', closeSidebar);
+sidebarOverlay.addEventListener('click', closeSidebar);
+
+document.querySelectorAll('[data-genre]').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('[data-genre]').forEach(e=>e.classList.remove('active'));
+    el.classList.add('active');
+    activeGenre = el.dataset.genre;
+    renderBooks();
+  });
+});
+
+document.querySelectorAll('[data-rating]').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('[data-rating]').forEach(e=>e.classList.remove('active'));
+    el.classList.add('active');
+    activeRating = parseInt(el.dataset.rating);
+    renderBooks();
+  });
+});
+
+/* ─── THEME ──────────────────────────────────────────────── */
+const themeToggle = document.getElementById('themeToggle');
+let dark = false;
+themeToggle.addEventListener('click',()=>{
+  dark = !dark;
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  themeToggle.textContent = dark ? '☀' : '☽';
+});
+
+/* ─── TOAST ──────────────────────────────────────────────── */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ─── INIT ───────────────────────────────────────────────── */
+loadBooks();
+
+/* ─── DISCOVER PAGE ──────────────────────────────────────── */
+const libraryPage  = document.getElementById('libraryPage');
+const discoverPage = document.getElementById('discoverPage');
+const navDiscover  = document.getElementById('navDiscover');
+let currentPage = 'library';
+let pendingBook = null;
+
+function showLibrary() {
+  currentPage = 'library';
+  libraryPage.style.display  = '';
+  discoverPage.style.display = 'none';
+  navDiscover.textContent = '🔍 Discover';
+  navDiscover.classList.remove('btn--primary');
+  navDiscover.classList.add('btn--ghost');
+}
+function showDiscover() {
+  currentPage = 'discover';
+  libraryPage.style.display  = 'none';
+  discoverPage.style.display = '';
+  navDiscover.textContent = '← Library';
+  navDiscover.classList.remove('btn--ghost');
+  navDiscover.classList.add('btn--primary');
+}
+
+navDiscover.addEventListener('click', () => {
+  currentPage === 'library' ? showDiscover() : showLibrary();
+});
+
+async function searchGoogleBooks(query) {
+  const url = `/book/search/?q=${encodeURIComponent(query)}&maxResults=20`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('API error ' + res.status);
+  return res.json();
+}
+
+function extractBook(item) {
+  const v = item.volumeInfo || {};
+  return {
+    gbId:        item.id,
+    title:       v.title || 'Unknown Title',
+    author:      (v.authors || ['Unknown Author']).join(', '),
+    pages:       v.pageCount || 0,
+    genre:       (v.categories || ['Other'])[0].split('/')[0].trim(),
+    description: v.description || '',
+    cover:       v.imageLinks ? (v.imageLinks.thumbnail || v.imageLinks.smallThumbnail || '') : '',
+    year:        v.publishedDate ? v.publishedDate.slice(0,4) : '',
+    publisher:   v.publisher || '',
+    language:    v.language || '',
+  };
+}
+
+async function doSearch() {
+  const q = document.getElementById('discoverInput').value.trim();
+  if (!q) return;
+
+  document.getElementById('discoverPlaceholder').style.display = 'none';
+  document.getElementById('discoverSpinner').style.display = 'flex';
+  document.getElementById('discoverResults').style.display = 'none';
+
+  try {
+    const data = await searchGoogleBooks(q);
+    const items = data.items || [];
+    renderResults(items, q);
+  } catch(e) {
+    showToast('Search failed. Check your API key or network.');
+    document.getElementById('discoverPlaceholder').style.display = '';
+  } finally {
+    document.getElementById('discoverSpinner').style.display = 'none';
+  }
+}
+
+function renderResults(items, q) {
+  const el = document.getElementById('discoverResults');
+  if (!items.length) {
+    el.innerHTML = `<div class="empty"><div class="empty__icon">🔍</div><div class="empty__text">No results for "<strong>${q}</strong>"</div></div>`;
+    el.style.display = 'block';
+    return;
+  }
+
+  const books = items.map(extractBook);
+  const inLib = b => window._books.some(lb => lb.title.toLowerCase() === b.title.toLowerCase());
+
+  el.innerHTML = `
+    <div class="results-header">
+      <span class="results-count">${items.length} results for "<strong>${q}</strong>"</span>
+    </div>
+    <div class="discover-results" id="resultsGrid">
+    ${books.map((b,i) => `
+      <div class="result-card" data-idx="${i}" style="animation-delay:${i*30}ms">
+        <div class="result-card__img">
+          ${b.cover
+            ? `<img src="${b.cover.replace('http://','https://')}" alt="${b.title}" loading="lazy" />`
+            : `<div class="result-card__img-placeholder">${b.title[0]}</div>`}
+        </div>
+        <div class="result-card__body">
+          <div class="result-card__title">${b.title}</div>
+          <div class="result-card__author">${b.author}</div>
+          <div class="result-card__meta">
+            ${b.genre ? `<span class="result-card__tag">${b.genre}</span>` : ''}
+            ${b.year  ? `<span class="result-card__tag">${b.year}</span>`  : ''}
+          </div>
+        </div>
+        <div class="result-card__footer">
+          <span class="result-card__pages">${b.pages ? b.pages+' pp' : 'Pages unknown'}</span>
+          <button class="btn--add ${inLib(b)?'added':''}" data-idx="${i}">
+            ${inLib(b) ? '✓ In Library' : '+ Add'}
+          </button>
+        </div>
+      </div>
+    `).join('')}
+    </div>
+  `;
+  el.style.display = 'block';
+
+  // Store results for lookup
+  el._results = books;
+
+  // Card click → detail modal
+  el.querySelectorAll('.result-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.classList.contains('btn--add')) return;
+      const b = el._results[parseInt(card.dataset.idx)];
+      openDetailModal(b);
+    });
+  });
+
+  // Quick-add button
+  el.querySelectorAll('.btn--add').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      const b = el._results[parseInt(btn.dataset.idx)];
+      if (btn.classList.contains('added')) return;
+      const ok = await addBookToLibrary(b, 'planned');
+      if (ok) {
+        btn.textContent = '✓ In Library';
+        btn.classList.add('added');
+      }
+    });
+  });
+}
+
+/* ─── DETAIL MODAL ───────────────────────────────────────── */
+const detailOverlay = document.getElementById('detailOverlay');
+
+function openDetailModal(b) {
+  pendingBook = b;
+  document.getElementById('detailTitle').textContent = b.title;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-cover">
+      ${b.cover
+        ? `<img src="${b.cover.replace('http://','https://')}" alt="${b.title}" />`
+        : `<div class="detail-cover-placeholder">${b.title[0]}</div>`}
+    </div>
+    <div class="detail-info">
+      <div class="detail-title">${b.title}</div>
+      <div class="detail-author">${b.author}</div>
+      <div class="detail-tags">
+        ${b.genre     ? `<span class="detail-tag">${b.genre}</span>` : ''}
+        ${b.year      ? `<span class="detail-tag">${b.year}</span>`  : ''}
+        ${b.language  ? `<span class="detail-tag">${b.language.toUpperCase()}</span>` : ''}
+        ${b.publisher ? `<span class="detail-tag">${b.publisher}</span>` : ''}
+      </div>
+      <div class="detail-stats">
+        ${b.pages ? `<div class="detail-stat"><span class="detail-stat__num">${b.pages}</span><span class="detail-stat__lbl">Pages</span></div>` : ''}
+        ${b.year  ? `<div class="detail-stat"><span class="detail-stat__num">${b.year}</span><span class="detail-stat__lbl">Published</span></div>` : ''}
+      </div>
+      ${b.description ? `<div class="detail-desc">${b.description}</div>` : ''}
+    </div>
+  `;
+  detailOverlay.classList.add('open');
+}
+
+function closeDetailModal() {
+  detailOverlay.classList.remove('open');
+  pendingBook = null;
+}
+
+document.getElementById('closeDetail').addEventListener('click', closeDetailModal);
+document.getElementById('cancelDetail').addEventListener('click', closeDetailModal);
+detailOverlay.addEventListener('click', e => { if (e.target === detailOverlay) closeDetailModal(); });
+
+document.getElementById('confirmAddBook').addEventListener('click', async () => {
+  if (!pendingBook) return;
+  const status = document.getElementById('detailStatus').value;
+  const ok = await addBookToLibrary(pendingBook, status);
+  if (ok) closeDetailModal();
+});
+
+async function addBookToLibrary(b, status) {
+  const payload = {
+    name: b.title,
+    author: b.author,
+    release_date: parseInt(b.year) || 0,
+    read_date: todayIsoDate(),
+    status: status,
+    genre: b.genre || 'Other',
+    rating: 0,
+    pages: b.pages || 0
+  };
+
+  try {
+    await postBook(payload);
+    await loadBooks();
+    showToast(`"${b.title}" added to your library!`);
+    return true;
+  } catch (e) {
+    showToast('Failed to save book.');
+    return false;
+  }
+}
+
+/* ─── WIRE UP DISCOVER SEARCH ────────────────────────────── */
+document.getElementById('discoverBtn').addEventListener('click', doSearch);
+document.getElementById('discoverInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+</script>
+</body>
+</html>

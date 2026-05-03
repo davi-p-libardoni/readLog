@@ -8,14 +8,14 @@ import Data.Time
 -- essa lista é o equivalente ao que seria puxado do banco de dados, nesse mesmo formato
 sampleBooks :: [Book]
 sampleBooks =
-      [ Book 1 "Dune" "Frank Herbert" 1965 (fromGregorian 2024 1 10) "Sci-Fi" 4.8 412
-      , Book 2 "Dune Messiah" "Frank Herbert" 1969 (fromGregorian 2024 1 22) "Sci-Fi" 4.1 256
-      , Book 3 "The Hobbit" "J.R.R. Tolkien" 1937 (fromGregorian 2024 2 5) "Fantasy" 4.5 310
-      , Book 4 "The Fellowship of the Ring" "J.R.R. Tolkien" 1954 (fromGregorian 2024 2 18) "Fantasy" 4.7 423
-      , Book 5 "Pride and Prejudice" "Jane Austen" 1813 (fromGregorian 2026 3 3) "Classic" 4.2 279
-      , Book 6 "Emma" "Jane Austen" 1815 (fromGregorian 2023 3 20) "Classic" 4.0 474
-      , Book 7 "Neuromancer" "William Gibson" 1984 (fromGregorian 2024 1 30) "Sci-Fi" 4.3 271
-      , Book 8 "The Left Hand of Darkness" "Ursula K. Le Guin" 1969 (fromGregorian 2026 2 9) "Sci-Fi" 4.4 304
+    [ Book 1 "Dune" "Frank Herbert" 1965 (fromGregorian 2024 1 10) "finished" "Sci-Fi" 4.8 412
+    , Book 2 "Dune Messiah" "Frank Herbert" 1969 (fromGregorian 2024 1 22) "finished" "Sci-Fi" 4.1 256
+    , Book 3 "The Hobbit" "J.R.R. Tolkien" 1937 (fromGregorian 2024 2 5) "reading" "Fantasy" 4.5 310
+    , Book 4 "The Fellowship of the Ring" "J.R.R. Tolkien" 1954 (fromGregorian 2024 2 18) "finished" "Fantasy" 4.7 423
+    , Book 5 "Pride and Prejudice" "Jane Austen" 1813 (fromGregorian 2026 3 3) "finished" "Classic" 4.2 279
+    , Book 6 "Emma" "Jane Austen" 1815 (fromGregorian 2023 3 20) "finished" "Classic" 4.0 474
+    , Book 7 "Neuromancer" "William Gibson" 1984 (fromGregorian 2024 1 30) "finished" "Sci-Fi" 4.3 271
+    , Book 8 "The Left Hand of Darkness" "Ursula K. Le Guin" 1969 (fromGregorian 2026 2 9) "finished" "Sci-Fi" 4.4 304
       ]
 
 -- para simplificar, os testes de filtro vão comparar apenas a lista
