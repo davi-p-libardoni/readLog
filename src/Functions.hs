@@ -2,7 +2,7 @@
 module Functions (Book(..), BookInput(..), BookUpdate(..), filterByAuthor, filterByGenre, filterByRating, filterByStatus, filterByQuery, orderByTitle, orderByAuthor, orderByRating, orderByPages, orderByDateRead, filterByMonthRead, filterByYearRead, pagesByMonth, pagesByYear) where
 
 import Data.Char (toLower)
-import Data.Aeson (FromJSON(..), ToJSON(..), object, withObject, (.:), (.=))
+import Data.Aeson (FromJSON(..), ToJSON(..), object, withObject, (.:), (.=), (.:?))
 import Data.List
 import Data.Ord
 import Data.Time
@@ -19,7 +19,8 @@ data Book = Book {
  genre :: String,
  rating :: Double,
  pages :: Int,
- currentPage :: Int
+ currentPage :: Int,
+ startDate :: Maybe Day
 } deriving (Show)
 
 data BookInput = BookInput {
@@ -37,7 +38,8 @@ data BookUpdate = BookUpdate {
     upStatus :: String,
     upRating :: Double,
     upCurrentPage :: Int,
-    upReadDate :: Day
+    upReadDate :: Day,
+    upStartDate :: Maybe Day
 } deriving (Show)
 
 -- filtra por autor
@@ -116,14 +118,14 @@ pagesByYear books year = sum (map pages (filterByYearRead books year))
 
 -- conversão de row do banco de dados para o tipo Book
 instance FromRow Book where
-    fromRow = Book <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
+    fromRow = Book <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
 
 -- conversão do tipo Book para row do db
 instance ToRow Book where
-    toRow (Book bid n a r rd s g rt pgs cp) = toRow (bid, n, a, r, rd, s, g, rt, pgs, cp)
+    toRow (Book bid n a r rd s g rt pgs cp sd) = toRow (bid, n, a, r, rd, s, g, rt, pgs, cp, sd)
 
 instance ToJSON Book where
-    toJSON (Book bid n a r rd s g rt pgs cp) =
+    toJSON (Book bid n a r rd s g rt pgs cp sd) =
         object
             [ "bookId" .= bid
             , "name" .= n
@@ -135,6 +137,7 @@ instance ToJSON Book where
             , "rating" .= rt
             , "pages" .= pgs
             , "current_page" .= cp
+            , "start_date" .= sd
             ]
 
 instance FromJSON BookInput where
@@ -156,3 +159,4 @@ instance FromJSON BookUpdate where
             <*> o .: "rating"
             <*> o .: "current_page"
             <*> o .: "read_date"
+            <*> o .:? "start_date"

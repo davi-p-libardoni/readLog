@@ -22,6 +22,8 @@ initDB conn = do
     \  current_page INTEGER DEFAULT 0)"
   execute_ conn
     "ALTER TABLE books ADD COLUMN IF NOT EXISTS current_page INTEGER DEFAULT 0"
+  execute_ conn
+    "ALTER TABLE books ADD COLUMN IF NOT EXISTS start_date DATE"
 
 insertBook :: Connection -> BookInput -> IO Int64
 insertBook conn book =
@@ -31,7 +33,7 @@ insertBook conn book =
 
 getBooks :: Connection -> IO [Book]
 getBooks conn = query_ conn
-  "SELECT id, name, author, release_date, read_date, status, genre, rating, pages, COALESCE(current_page, 0) FROM books"
+  "SELECT id, name, author, release_date, read_date, status, genre, rating, pages, COALESCE(current_page, 0), start_date FROM books"
 
 removeBook :: Connection -> Int -> IO Int64
 removeBook conn bid = execute conn "DELETE FROM books WHERE id = ?" (Only bid)
@@ -39,5 +41,5 @@ removeBook conn bid = execute conn "DELETE FROM books WHERE id = ?" (Only bid)
 updateBook :: Connection -> Int -> BookUpdate -> IO Int64
 updateBook conn bid upd =
   execute conn
-    "UPDATE books SET status = ?, rating = ?, current_page = ?, read_date = ? WHERE id = ?"
-    (upStatus upd, upRating upd, upCurrentPage upd, upReadDate upd, bid)
+    "UPDATE books SET status = ?, rating = ?, current_page = ?, read_date = ?, start_date = ? WHERE id = ?"
+    (upStatus upd, upRating upd, upCurrentPage upd, upReadDate upd, upStartDate upd, bid)

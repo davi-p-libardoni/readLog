@@ -340,6 +340,18 @@
         </div>
       </div>
 
+      <!-- Dates -->
+      <div class="field-row" style="margin-bottom:1rem">
+        <div class="field">
+          <label>Início da leitura</label>
+          <input type="date" id="editStartDate" style="width:100%;padding:.4rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--ink1);font-family:inherit;font-size:.875rem" />
+        </div>
+        <div class="field">
+          <label>Data de conclusão</label>
+          <input type="date" id="editReadDate" style="width:100%;padding:.4rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--ink1);font-family:inherit;font-size:.875rem" />
+        </div>
+      </div>
+
       <!-- Rating -->
       <div class="field">
         <label>Avaliação</label>
@@ -450,6 +462,7 @@ function normalizeBook(b) {
     rating: Math.round(b.rating || 0),
     releaseDate: b.release_date,
     readDate: b.read_date,
+    startDate: b.start_date || '',
     cover: b.cover || ''
   };
 }
@@ -736,6 +749,10 @@ function openEditModal(b) {
   pctSlider.value = b.progress || 0;
   document.getElementById('pctVal').textContent = (b.progress || 0) + '%';
 
+  // Dates
+  document.getElementById('editStartDate').value = b.startDate || '';
+  document.getElementById('editReadDate').value = b.readDate || todayIsoDate();
+
   // Stars
   renderStars(editRating);
 
@@ -816,7 +833,8 @@ document.getElementById('saveEdit').addEventListener('click', async () => {
     status: newStatus,
     rating: editRating,
     current_page: newStatus === 'finished' ? (b.pages || currentPage) : currentPage,
-    read_date: todayIsoDate()
+    read_date: document.getElementById('editReadDate').value || todayIsoDate(),
+    start_date: document.getElementById('editStartDate').value || null
   };
 
   try {
