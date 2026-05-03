@@ -27,12 +27,15 @@ main = do
   conn <- connectPostgreSQL dbUrl
   _ <- initDB conn
 
+  mStaticDir <- lookupEnv "STATIC_DIR"
+  let staticDir = maybe "static" id mStaticDir
+
   scotty port $ do
     middleware logStdoutDev
-    middleware (staticPolicy (addBase "static"))
+    middleware (staticPolicy (addBase staticDir))
 
     get "/" $ do
-      file "static/readlog.html"
+      file (staticDir ++ "/readlog.html")
 
     get "/books" $ do
       books <- liftIO (getBooks conn)
