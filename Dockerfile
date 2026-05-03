@@ -23,10 +23,12 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY --from=build /app/bin/readlog-exe /app/readlog-exe
+COPY static /app/static
 
 EXPOSE 3000
 
 # Render provides PORT at runtime
 ENV PORT=3000
+ENV STATIC_DIR=/app/static
 
 CMD ["/app/readlog-exe"]

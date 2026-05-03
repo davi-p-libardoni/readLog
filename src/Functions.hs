@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Functions (Book(..), BookInput(..), filterByAuthor, filterByGenre, filterByRating, filterByStatus, filterByQuery, orderByTitle, orderByAuthor, orderByRating, orderByPages, orderByDateRead, filterByMonthRead, filterByYearRead, pagesByMonth, pagesByYear) where
+module Functions (Book(..), BookInput(..), BookUpdate(..), filterByAuthor, filterByGenre, filterByRating, filterByStatus, filterByQuery, orderByTitle, orderByAuthor, orderByRating, orderByPages, orderByDateRead, filterByMonthRead, filterByYearRead, pagesByMonth, pagesByYear) where
 
 import Data.Char (toLower)
 import Data.Aeson (FromJSON(..), ToJSON(..), object, withObject, (.:), (.=))
@@ -18,7 +18,8 @@ data Book = Book {
  bStatus :: String,
  genre :: String,
  rating :: Double,
- pages :: Int
+ pages :: Int,
+ currentPage :: Int
 } deriving (Show)
 
 data BookInput = BookInput {
@@ -30,6 +31,13 @@ data BookInput = BookInput {
     inGenre :: String,
     inRating :: Double,
     inPages :: Int
+} deriving (Show)
+
+data BookUpdate = BookUpdate {
+    upStatus :: String,
+    upRating :: Double,
+    upCurrentPage :: Int,
+    upReadDate :: Day
 } deriving (Show)
 
 -- filtra por autor
@@ -108,14 +116,14 @@ pagesByYear books year = sum (map pages (filterByYearRead books year))
 
 -- conversão de row do banco de dados para o tipo Book
 instance FromRow Book where
-    fromRow = Book <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
+    fromRow = Book <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
 
 -- conversão do tipo Book para row do db
 instance ToRow Book where
-    toRow (Book bid n a r rd s g rt pgs) = toRow (bid, n, a, r, rd, s, g, rt, pgs)
+    toRow (Book bid n a r rd s g rt pgs cp) = toRow (bid, n, a, r, rd, s, g, rt, pgs, cp)
 
 instance ToJSON Book where
-    toJSON (Book bid n a r rd s g rt pgs) =
+    toJSON (Book bid n a r rd s g rt pgs cp) =
         object
             [ "bookId" .= bid
             , "name" .= n
@@ -126,6 +134,7 @@ instance ToJSON Book where
             , "genre" .= g
             , "rating" .= rt
             , "pages" .= pgs
+            , "current_page" .= cp
             ]
 
 instance FromJSON BookInput where
@@ -139,3 +148,11 @@ instance FromJSON BookInput where
             <*> o .: "genre"
             <*> o .: "rating"
             <*> o .: "pages"
+
+instance FromJSON BookUpdate where
+    parseJSON = withObject "BookUpdate" $ \o ->
+        BookUpdate
+            <$> o .: "status"
+            <*> o .: "rating"
+            <*> o .: "current_page"
+            <*> o .: "read_date"

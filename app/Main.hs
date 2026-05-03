@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import Functions (Book(..),BookInput(..))
+import Functions (Book(..),BookInput(..),BookUpdate(..))
 import APICalls (searchBooks)
 import DBAccess
 
@@ -9,6 +9,7 @@ import Web.Scotty
 import Database.PostgreSQL.Simple
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Network.Wai.Middleware.Static (staticPolicy, addBase)
+import Network.HTTP.Types.Status (notFound404)
 import System.Environment (lookupEnv)
 import Text.Read (readMaybe)
 import qualified Data.Text.Lazy as TL
@@ -41,12 +42,25 @@ main = do
       q <- (param "q" :: ActionM TL.Text)
       result <- liftIO (searchBooks (TL.unpack q))
       json result
-    
+
     post "/book/add" $ do
       book <- (jsonData :: ActionM BookInput)
       _ <- liftIO (insertBook conn book)
       json ("ok" :: TL.Text)
-    
-    
+
+    patch "/book/:id" $ do
+      bid <- (param "id" :: ActionM Int)
+      upd <- (jsonData :: ActionM BookUpdate)
+      n <- liftIO (updateBook conn bid upd)
+      if n == 0
+        then status notFound404
+        else json ("ok" :: TL.Text)
+
+    delete "/book/:id" $ do
+      bid <- (param "id" :: ActionM Int)
+      result <- liftIO (removeBook conn bid)
+      if result == 0
+        then status notFound404
+        else json ("ok" :: TL.Text)
 
   close conn

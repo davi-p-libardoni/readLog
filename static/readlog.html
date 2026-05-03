@@ -7,6 +7,72 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
+<style>
+/* ── PROGRESS MODAL ─────────────────────────────── */
+.progress-modal { max-width: 420px; }
+.progress-tabs { display:flex; gap:.5rem; margin-bottom:1.2rem; }
+.progress-tab {
+  flex:1; padding:.5rem; border:1px solid var(--border);
+  background:transparent; border-radius:6px; cursor:pointer;
+  font-family:inherit; font-size:.85rem; color:var(--ink2);
+  transition:.15s;
+}
+.progress-tab.active {
+  background:var(--accent); color:#fff; border-color:var(--accent);
+}
+.progress-input-wrap { display:flex; align-items:center; gap:.75rem; }
+.progress-input-wrap input[type=range] { flex:1; accent-color:var(--accent); }
+.progress-val { min-width:3.5rem; text-align:right; font-weight:600; color:var(--accent); }
+.star-row { display:flex; gap:.25rem; }
+.star-btn {
+  font-size:1.5rem; background:none; border:none; cursor:pointer;
+  color:var(--ink3); transition:.1s; line-height:1;
+}
+.star-btn.on { color:#f5a623; }
+.field label { display:block; font-size:.78rem; font-weight:500;
+  color:var(--ink2); margin-bottom:.35rem; text-transform:uppercase; letter-spacing:.05em; }
+
+/* ── BOOK CARD clickable ─────────────────────────── */
+.book-card { cursor:pointer; }
+.book-card__cover { position:relative; overflow:hidden; }
+.book-card__cover img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+
+/* ── STATS PAGE ──────────────────────────────────── */
+#statsPage { padding:2rem; max-width:900px; margin:0 auto; display:none; }
+.stats-title { font-family:'Fraunces',serif; font-size:2rem; margin-bottom:1.5rem; color:var(--ink1); }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
+.stat-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:1.2rem; display:flex; flex-direction:column; gap:.25rem;
+}
+.stat-card__num { font-family:'Fraunces',serif; font-size:2rem; font-weight:600; color:var(--accent); }
+.stat-card__lbl { font-size:.8rem; color:var(--ink2); }
+.chart-section { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; }
+.chart-title { font-size:.9rem; font-weight:600; color:var(--ink1); margin-bottom:1rem; text-transform:uppercase; letter-spacing:.06em; }
+.bar-chart { display:flex; align-items:flex-end; gap:.5rem; height:140px; }
+.bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:.35rem; }
+.bar-col__bar-wrap { flex:1; width:100%; display:flex; align-items:flex-end; }
+.bar-col__bar { width:100%; background:var(--accent); border-radius:4px 4px 0 0; min-height:2px; transition:.5s cubic-bezier(.4,0,.2,1); opacity:.85; }
+.bar-col__label { font-size:.65rem; color:var(--ink2); }
+.bar-col__val { font-size:.7rem; font-weight:600; color:var(--ink1); }
+.author-table { width:100%; border-collapse:collapse; font-size:.875rem; }
+.author-table th { text-align:left; padding:.5rem .75rem; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink2); border-bottom:1px solid var(--border); }
+.author-table td { padding:.6rem .75rem; border-bottom:1px solid var(--border); color:var(--ink1); }
+.author-table tr:last-child td { border-bottom:none; }
+
+/* ── NAV STATS BUTTON ────────────────────────────── */
+#navStats { }
+
+/* ── AUTHOR FILTER INPUT ─────────────────────────── */
+.sidebar__author-input {
+  width:100%; box-sizing:border-box;
+  padding:.5rem .75rem; border:1px solid var(--border);
+  border-radius:8px; background:var(--bg); color:var(--ink1);
+  font-family:inherit; font-size:.875rem;
+  margin-top:.5rem;
+}
+.sidebar__author-input:focus { outline:none; border-color:var(--accent); }
+</style>
 </head>
 <body>
 
@@ -20,13 +86,15 @@
   </div>
 
   <div class="nav__actions">
+    <button class="btn btn--ghost" id="navStats">📊 Estatísticas</button>
     <button class="btn btn--ghost" id="navDiscover">🔍 Descobrir</button>
-    <button class="btn btn--ghost" id="openSidebar">⇄ Ordenar</button>
+    <button class="btn btn--ghost" id="openSidebar">⇄ Filtrar</button>
     <button class="btn btn--primary" id="openModal">+ Adicionar livro</button>
     <button class="theme-toggle" id="themeToggle" title="Alternar tema">☽</button>
   </div>
 </nav>
 
+<!-- ══ LIBRARY PAGE ══════════════════════════════════ -->
 <div id="libraryPage">
 <!-- HERO -->
 <section class="hero">
@@ -105,10 +173,10 @@
   <div class="filters__sort">
     <span>Ordenar por</span>
     <select id="sortSelect">
-      <option value="title">Titulo</option>
+      <option value="title">Título</option>
       <option value="author">Autor</option>
       <option value="rating">Nota</option>
-      <option value="pages">Paginas</option>
+      <option value="pages">Páginas</option>
     </select>
   </div>
 </div>
@@ -119,24 +187,41 @@
 </div>
 </div><!-- /#libraryPage -->
 
-<!-- DISCOVER PAGE -->
+<!-- ══ STATS PAGE ════════════════════════════════════ -->
+<div id="statsPage">
+  <h2 class="stats-title">Suas Estatísticas</h2>
+  <div class="stats-grid" id="statsCards"></div>
+  <div class="chart-section">
+    <div class="chart-title">Páginas lidas por mês (ano atual)</div>
+    <div class="bar-chart" id="pagesChart"></div>
+  </div>
+  <div class="chart-section">
+    <div class="chart-title">Livros por autor</div>
+    <table class="author-table">
+      <thead><tr><th>Autor</th><th>Livros</th><th>Páginas totais</th><th>Média de avaliação</th></tr></thead>
+      <tbody id="authorTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ DISCOVER PAGE ═════════════════════════════════ -->
 <div id="discoverPage" style="display:none">
   <div class="discover-hero">
     <div class="discover-hero__inner">
       <div class="discover-hero__eyebrow">Google Books</div>
-      <h2 class="discover-hero__title">Descubra sua proxima<br><em>grande leitura</em></h2>
-      <p class="discover-hero__sub">Pesquise milhoes de livros e adicione a sua biblioteca com um clique.</p>
+      <h2 class="discover-hero__title">Descubra sua próxima<br><em>grande leitura</em></h2>
+      <p class="discover-hero__sub">Pesquise milhões de livros e adicione à sua biblioteca com um clique.</p>
       <div class="discover-search-wrap">
         <span class="discover-search-icon">⌕</span>
-        <input type="text" id="discoverInput" placeholder="Buscar por titulo, autor ou ISBN…" autocomplete="off" />
+        <input type="text" id="discoverInput" placeholder="Buscar por título, autor ou ISBN…" autocomplete="off" />
         <button class="btn btn--primary" id="discoverBtn">Buscar</button>
       </div>
     </div>
   </div>
   <div class="discover-body">
     <div class="discover-placeholder" id="discoverPlaceholder">
-      <div class="discover-placeholder__icon">&#x1F4D6;</div>
-      <div class="discover-placeholder__text">Comece a digitar para pesquisar no catalogo do Google Books</div>
+      <div class="discover-placeholder__icon">📖</div>
+      <div class="discover-placeholder__text">Comece a digitar para pesquisar no catálogo do Google Books</div>
     </div>
     <div class="discover-spinner" id="discoverSpinner" style="display:none">
       <div class="spinner"></div>
@@ -146,7 +231,7 @@
   </div>
 </div>
 
-<!-- BOOK DETAIL OVERLAY -->
+<!-- ══ BOOK DETAIL OVERLAY (from Discover) ══════════ -->
 <div class="overlay" id="detailOverlay">
   <div class="modal modal--wide">
     <div class="modal__header">
@@ -161,12 +246,12 @@
         <option value="reading">Adicionar como Lendo</option>
         <option value="finished">Adicionar como Finalizado</option>
       </select>
-      <button class="btn btn--primary" id="confirmAddBook">+ Adicionar a biblioteca</button>
+      <button class="btn btn--primary" id="confirmAddBook">+ Adicionar à biblioteca</button>
     </div>
   </div>
 </div>
 
-<!-- ADD BOOK MODAL -->
+<!-- ══ ADD BOOK MODAL ════════════════════════════════ -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal__header">
@@ -175,8 +260,8 @@
     </div>
     <div class="modal__body">
       <div class="field">
-        <label>Titulo</label>
-        <input type="text" id="newTitle" placeholder="Titulo do livro…" />
+        <label>Título</label>
+        <input type="text" id="newTitle" placeholder="Título do livro…" />
       </div>
       <div class="field">
         <label>Autor</label>
@@ -193,13 +278,13 @@
           </select>
         </div>
         <div class="field">
-          <label>Paginas</label>
+          <label>Páginas</label>
           <input type="number" id="newPages" placeholder="ex: 320" min="1" />
         </div>
       </div>
       <div class="field">
-        <label>Genero</label>
-        <input type="text" id="newGenre" placeholder="Ficcao, Fantasia, Nao ficcao…" />
+        <label>Gênero</label>
+        <input type="text" id="newGenre" placeholder="Ficção, Fantasia, Não ficção…" />
       </div>
     </div>
     <div class="modal__footer">
@@ -209,42 +294,113 @@
   </div>
 </div>
 
-<!-- SORT SIDEBAR -->
+<!-- ══ EDIT / PROGRESS MODAL ════════════════════════ -->
+<div class="overlay" id="editOverlay">
+  <div class="modal progress-modal">
+    <div class="modal__header">
+      <span class="modal__title" id="editModalTitle">Atualizar livro</span>
+      <button class="modal__close" id="closeEdit">✕</button>
+    </div>
+    <div class="modal__body">
+
+      <!-- Status -->
+      <div class="field" style="margin-bottom:1rem">
+        <label>Status</label>
+        <select id="editStatus">
+          <option value="planned">Planejado</option>
+          <option value="reading">Lendo</option>
+          <option value="finished">Finalizado</option>
+          <option value="dropped">Abandonado</option>
+        </select>
+      </div>
+
+      <!-- Progress tabs -->
+      <div class="field" style="margin-bottom:1rem">
+        <label>Progresso de leitura</label>
+        <div class="progress-tabs">
+          <button class="progress-tab active" data-mode="pages">Por páginas</button>
+          <button class="progress-tab" data-mode="pct">Por porcentagem</button>
+        </div>
+
+        <div id="modePages">
+          <div class="progress-input-wrap">
+            <input type="range" id="pageSlider" min="0" max="100" value="0" />
+            <span class="progress-val" id="pageVal">0 pág</span>
+          </div>
+          <div style="display:flex;gap:.5rem;margin-top:.5rem">
+            <input type="number" id="pageInput" min="0" placeholder="Página atual" style="flex:1;padding:.4rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--ink1);font-family:inherit;font-size:.875rem" />
+          </div>
+        </div>
+
+        <div id="modePct" style="display:none">
+          <div class="progress-input-wrap">
+            <input type="range" id="pctSlider" min="0" max="100" value="0" />
+            <span class="progress-val" id="pctVal">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <div class="field">
+        <label>Avaliação</label>
+        <div class="star-row" id="starRow">
+          <button class="star-btn" data-star="1">★</button>
+          <button class="star-btn" data-star="2">★</button>
+          <button class="star-btn" data-star="3">★</button>
+          <button class="star-btn" data-star="4">★</button>
+          <button class="star-btn" data-star="5">★</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="cancelEdit">Cancelar</button>
+      <button class="btn btn--primary" id="saveEdit">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SORT / FILTER SIDEBAR ════════════════════════ -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="sidebar" id="sidebar">
   <div class="sidebar__title">
-    Filtro e ordenacao
+    Filtro e ordenação
     <button class="modal__close" id="closeSidebar">✕</button>
   </div>
 
   <div class="sidebar__section">
-    <h4>Genero</h4>
+    <h4>Gênero</h4>
     <div class="sidebar__option active" data-genre="all">
-      <span class="sidebar__option__dot" style="background:var(--ink3)"></span>Todos os generos
+      <span class="sidebar__option__dot" style="background:var(--ink3)"></span>Todos os gêneros
     </div>
     <div class="sidebar__option" data-genre="Fiction">
-      <span class="sidebar__option__dot" style="background:#3A6B8A"></span>Ficcao
+      <span class="sidebar__option__dot" style="background:#3A6B8A"></span>Ficção
     </div>
     <div class="sidebar__option" data-genre="Classic">
-      <span class="sidebar__option__dot" style="background:#8B6B4A"></span>Classico
+      <span class="sidebar__option__dot" style="background:#8B6B4A"></span>Clássico
     </div>
     <div class="sidebar__option" data-genre="Fantasy">
       <span class="sidebar__option__dot" style="background:#4A7C59"></span>Fantasia
     </div>
     <div class="sidebar__option" data-genre="Non-fiction">
-      <span class="sidebar__option__dot" style="background:#C8593A"></span>Nao ficcao
+      <span class="sidebar__option__dot" style="background:#C8593A"></span>Não ficção
     </div>
     <div class="sidebar__option" data-genre="Sci-fi">
-      <span class="sidebar__option__dot" style="background:#6B4A8B"></span>Ficcao cientifica
+      <span class="sidebar__option__dot" style="background:#6B4A8B"></span>Ficção científica
     </div>
   </div>
 
   <div class="sidebar__section">
-    <h4>Avaliacao</h4>
+    <h4>Autor</h4>
+    <input type="text" class="sidebar__author-input" id="authorFilter" placeholder="Filtrar por autor…" />
+  </div>
+
+  <div class="sidebar__section">
+    <h4>Avaliação</h4>
     <div class="sidebar__option" data-rating="5">⭐⭐⭐⭐⭐ &nbsp;5 estrelas</div>
     <div class="sidebar__option" data-rating="4">⭐⭐⭐⭐ &nbsp;4+ estrelas</div>
     <div class="sidebar__option" data-rating="3">⭐⭐⭐ &nbsp;3+ estrelas</div>
-    <div class="sidebar__option" data-rating="0">Qualquer nota</div>
+    <div class="sidebar__option active" data-rating="0">Qualquer nota</div>
   </div>
 </div>
 
@@ -252,7 +408,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ─── DATA ────────────────────────────────────────────────── */
+/* ─── DATA ────────────────────────────────────────── */
 const COLORS = [
   'linear-gradient(135deg,#2A3A5A,#1A2A4A)',
   'linear-gradient(135deg,#4A2A3A,#2A1A2A)',
@@ -266,20 +422,22 @@ const COLORS = [
 
 let books = [];
 window._books = books;
-
-let nextId = 9;
 let activeFilter = 'all';
 let activeGenre  = 'all';
 let activeRating = 0;
+let activeAuthor = '';
 let searchQuery  = '';
 
-function computeProgress(status){
-  if (status === 'finished') return 100;
-  if (status === 'reading') return 50;
+/* ─── NORMALIZE ───────────────────────────────────── */
+function computeProgress(b) {
+  if (b.status === 'finished') return 100;
+  if (b.pages && b.current_page) return Math.round((b.current_page / b.pages) * 100);
+  if (b.status === 'reading') return 0;
   return 0;
 }
 
-function normalizeBook(b){
+function normalizeBook(b) {
+  const cp = b.current_page || 0;
   return {
     id: b.bookId,
     title: b.name,
@@ -287,29 +445,19 @@ function normalizeBook(b){
     status: b.status || 'planned',
     genre: b.genre || 'Outro',
     pages: b.pages || 0,
-    progress: computeProgress(b.status),
+    currentPage: cp,
+    progress: (b.status === 'finished') ? 100 : (b.pages ? Math.round((cp / b.pages) * 100) : 0),
     rating: Math.round(b.rating || 0),
     releaseDate: b.release_date,
-    readDate: b.read_date
+    readDate: b.read_date,
+    cover: b.cover || ''
   };
 }
 
-async function loadBooks(){
+/* ─── API ─────────────────────────────────────────── */
+async function loadBooks() {
   try {
-    const params = new URLSearchParams();
-    if (activeFilter !== 'all') params.set('status', activeFilter);
-    if (activeGenre !== 'all') params.set('genre', activeGenre);
-    if (activeRating > 0) params.set('rating', String(activeRating));
-    if (searchQuery) params.set('q', searchQuery);
-
-    const sort = document.getElementById('sortSelect').value;
-    params.set('sort', sort);
-    if (sort === 'rating' || sort === 'pages') {
-      params.set('order', 'desc');
-    }
-
-    const url = params.toString() ? `/books?${params.toString()}` : '/books';
-    const res = await fetch(url);
+    const res = await fetch('/books');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     books = data.map(normalizeBook);
@@ -325,11 +473,11 @@ async function loadBooks(){
   }
 }
 
-function todayIsoDate(){
+function todayIsoDate() {
   return new Date().toISOString().slice(0, 10);
 }
 
-async function postBook(payload){
+async function postBook(payload) {
   const res = await fetch('/book/add', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -338,46 +486,92 @@ async function postBook(payload){
   if (!res.ok) throw new Error('HTTP ' + res.status);
 }
 
-async function deleteBookById(id){
+async function patchBook(id, payload) {
+  const res = await fetch(`/book/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+}
+
+async function deleteBookById(id) {
   const res = await fetch(`/book/${id}`, { method: 'DELETE' });
   if (!res.ok && res.status !== 404) throw new Error('HTTP ' + res.status);
 }
 
-/* ─── RENDER ──────────────────────────────────────────────── */
-function statusLabel(s){
-  return {reading:'Em leitura',planned:'Planejado',finished:'Finalizado',dropped:'Abandonado'}[s]||s;
+/* ─── RENDER ──────────────────────────────────────── */
+function statusLabel(s) {
+  return { reading:'Em leitura', planned:'Planejado', finished:'Finalizado', dropped:'Abandonado' }[s] || s;
 }
-function stars(n){
-  if(!n) return '<span style="color:var(--ink3);font-size:.75rem">Sem avaliacao</span>';
-  return '★'.repeat(n)+'☆'.repeat(5-n);
+function stars(n) {
+  if (!n) return '<span style="color:var(--ink3);font-size:.75rem">Sem avaliação</span>';
+  return '★'.repeat(n) + '☆'.repeat(5-n);
 }
 
-function renderBooks(){
+function renderBooks() {
   const grid = document.getElementById('bookGrid');
-  if(!books.length){
+  let filtered = books.filter(b => {
+    const matchFilter = activeFilter === 'all' || b.status === activeFilter;
+    const matchGenre  = activeGenre === 'all' || b.genre === activeGenre;
+    const matchRating = b.rating >= activeRating;
+    const matchAuthor = !activeAuthor || b.author.toLowerCase().includes(activeAuthor.toLowerCase());
+    const matchSearch = !searchQuery ||
+      b.title.toLowerCase().includes(searchQuery) ||
+      b.author.toLowerCase().includes(searchQuery);
+    return matchFilter && matchGenre && matchRating && matchAuthor && matchSearch;
+  });
+
+  const sort = document.getElementById('sortSelect').value;
+  filtered.sort((a, b) => {
+    if (sort === 'rating') return b.rating - a.rating;
+    if (sort === 'pages')  return b.pages  - a.pages;
+    if (sort === 'author') return a.author.localeCompare(b.author);
+    return a.title.localeCompare(b.title);
+  });
+
+  if (!filtered.length) {
     grid.innerHTML = `<div class="empty"><div class="empty__icon">📚</div><div class="empty__text">Nenhum livro corresponde a este filtro.</div></div>`;
     return;
   }
 
-  grid.innerHTML = books.map((b,i)=>{
+  grid.innerHTML = filtered.map((b, i) => {
     const color = COLORS[b.id % COLORS.length];
     const initial = b.title[0];
+    const coverContent = b.cover
+      ? `<img src="${b.cover.replace('http://','https://')}" alt="${b.title}" />`
+      : initial;
     return `
     <div class="book-card" data-id="${b.id}" style="animation-delay:${i*40}ms">
-      <div class="book-card__cover" style="background:${color}">${initial}</div>
+      <div class="book-card__cover" style="background:${color}">${coverContent}</div>
       <div class="book-card__body">
         <span class="book-card__status status--${b.status}">${statusLabel(b.status)}</span>
         <div class="book-card__title">${b.title}</div>
         <div class="book-card__author">${b.author}</div>
-        ${b.status==='reading' ? `<div class="book-card__progress"><div class="book-card__progress__fill" style="width:${b.progress}%"></div></div>` : ''}
+        ${b.status === 'reading' ? `
+          <div class="book-card__progress">
+            <div class="book-card__progress__fill" style="width:${b.progress}%"></div>
+          </div>
+          <div style="font-size:.7rem;color:var(--ink2);margin-top:.2rem">
+            ${b.pages ? `${b.currentPage} / ${b.pages} pág (${b.progress}%)` : `${b.progress}%`}
+          </div>` : ''}
       </div>
       <div class="book-card__footer">
         <div class="book-card__rating">${stars(b.rating)}</div>
-        <div class="book-card__pages">${b.pages} pag</div>
+        <div class="book-card__pages">${b.pages} pág</div>
         <button class="book-card__remove" data-id="${b.id}">Remover</button>
       </div>
     </div>`;
   }).join('');
+
+  grid.querySelectorAll('.book-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.classList.contains('book-card__remove')) return;
+      const id = parseInt(card.dataset.id);
+      const b = books.find(x => x.id === id);
+      if (b) openEditModal(b);
+    });
+  });
 
   grid.querySelectorAll('.book-card__remove').forEach(btn => {
     btn.addEventListener('click', async e => {
@@ -393,15 +587,15 @@ function renderBooks(){
   });
 }
 
-/* ─── HERO ───────────────────────────────────────────────── */
-function updateHero(){
+/* ─── HERO ────────────────────────────────────────── */
+function updateHero() {
   const hero = books.find(b => b.status === 'reading') || books[0];
   if (!hero) {
     document.getElementById('heroLabel').textContent = 'Biblioteca';
     document.getElementById('heroTitle').textContent = 'Nenhum livro ainda';
     document.getElementById('heroAuthor').textContent = 'Adicione seu primeiro livro';
     document.getElementById('heroMeta').textContent = 'Comece a montar sua estante';
-    document.getElementById('heroPageLabel').textContent = 'Paginas: --';
+    document.getElementById('heroPageLabel').textContent = 'Páginas: --';
     document.getElementById('pct').textContent = '0%';
     document.getElementById('heroProgress').style.width = '0%';
     document.getElementById('daysLeft').textContent = '--';
@@ -418,22 +612,24 @@ function updateHero(){
   if (hero.genre) metaBits.push(hero.genre);
   if (hero.releaseDate) metaBits.push(String(hero.releaseDate));
   document.getElementById('heroMeta').textContent = metaBits.join(' · ') || 'Desconhecido';
-  document.getElementById('heroPageLabel').textContent = `Paginas: ${hero.pages || '--'}`;
+  document.getElementById('heroPageLabel').textContent =
+    hero.pages ? `${hero.currentPage} / ${hero.pages} pág` : 'Páginas: --';
 
   const pct = Math.max(0, Math.min(100, hero.progress || 0));
   document.getElementById('pct').textContent = pct + '%';
   const bar = document.getElementById('heroProgress');
   bar.style.width = '0%';
-  setTimeout(()=>{ bar.style.width = pct + '%'; }, 150);
+  setTimeout(() => { bar.style.width = pct + '%'; }, 150);
 
   const year = new Date().getFullYear();
   const booksThisYear = books.filter(b => b.readDate && new Date(b.readDate).getFullYear() === year).length;
   document.getElementById('booksThisYear').textContent = String(booksThisYear);
 
-  if (hero.status === 'reading' && hero.pages) {
-    const pagesPerDay = Math.max(1, Math.round(hero.pages / 30));
+  if (hero.status === 'reading' && hero.pages && hero.currentPage) {
+    const remaining = hero.pages - hero.currentPage;
+    const pagesPerDay = Math.max(1, Math.round(remaining / 30));
     document.getElementById('pagesPerDay').textContent = String(pagesPerDay);
-    document.getElementById('daysLeft').textContent = String(30);
+    document.getElementById('daysLeft').textContent = String(Math.ceil(remaining / pagesPerDay));
   } else {
     document.getElementById('pagesPerDay').textContent = '--';
     document.getElementById('daysLeft').textContent = '--';
@@ -442,7 +638,7 @@ function updateHero(){
   updateCoverStack(books);
 }
 
-function updateCoverStack(list){
+function updateCoverStack(list) {
   const slots = [
     { title: 'coverTitle1', author: 'coverAuthor1' },
     { title: 'coverTitle2', author: 'coverAuthor2' },
@@ -451,151 +647,358 @@ function updateCoverStack(list){
   slots.forEach((slot, i) => {
     const b = list[i];
     document.getElementById(slot.title).textContent = b ? b.title : '--';
-    const author = b ? b.author : '';
-    const year = b && b.releaseDate ? String(b.releaseDate) : '';
-    document.getElementById(slot.author).textContent = [author, year].filter(Boolean).join(' · ') || '--';
+    const authorStr = b ? b.author : '';
+    const yearStr = b && b.releaseDate ? String(b.releaseDate) : '';
+    document.getElementById(slot.author).textContent = [authorStr, yearStr].filter(Boolean).join(' · ') || '--';
   });
 }
 
-/* ─── FILTER CHIPS ────────────────────────────────────────── */
-document.querySelectorAll('.filter-chip').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+/* ─── FILTER CHIPS ────────────────────────────────── */
+document.querySelectorAll('.filter-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeFilter = btn.dataset.filter;
-    loadBooks();
+    renderBooks();
   });
 });
 
-/* ─── SEARCH ──────────────────────────────────────────────── */
-document.getElementById('searchInput').addEventListener('input', e=>{
+/* ─── SEARCH ──────────────────────────────────────── */
+document.getElementById('searchInput').addEventListener('input', e => {
   searchQuery = e.target.value.toLowerCase().trim();
-  loadBooks();
+  renderBooks();
 });
 
-/* ─── SORT ────────────────────────────────────────────────── */
-document.getElementById('sortSelect').addEventListener('change', loadBooks);
+/* ─── SORT ────────────────────────────────────────── */
+document.getElementById('sortSelect').addEventListener('change', renderBooks);
 
-/* ─── MODAL ──────────────────────────────────────────────── */
+/* ─── ADD BOOK MODAL ──────────────────────────────── */
 const overlay = document.getElementById('overlay');
-function openModal(){ overlay.classList.add('open') }
-function closeModal(){
+function openModal() { overlay.classList.add('open'); }
+function closeModal() {
   overlay.classList.remove('open');
-  ['newTitle','newAuthor','newPages','newGenre'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('newStatus').value='planned';
+  ['newTitle','newAuthor','newPages','newGenre'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('newStatus').value = 'planned';
 }
 
 document.getElementById('openModal').addEventListener('click', openModal);
 document.getElementById('closeModal').addEventListener('click', closeModal);
 document.getElementById('cancelModal').addEventListener('click', closeModal);
-overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
-document.getElementById('saveBook').addEventListener('click', async ()=>{
+document.getElementById('saveBook').addEventListener('click', async () => {
   const title  = document.getElementById('newTitle').value.trim();
   const author = document.getElementById('newAuthor').value.trim();
   const status = document.getElementById('newStatus').value;
-  const pages  = parseInt(document.getElementById('newPages').value)||0;
-  const genre  = document.getElementById('newGenre').value.trim()||'Outro';
+  const pages  = parseInt(document.getElementById('newPages').value) || 0;
+  const genre  = document.getElementById('newGenre').value.trim() || 'Outro';
 
-  if(!title||!author){ showToast('Preencha titulo e autor.'); return; }
+  if (!title || !author) { showToast('Preencha título e autor.'); return; }
 
   const payload = {
-    name: title,
-    author: author,
-    release_date: 0,
-    read_date: todayIsoDate(),
-    status: status,
-    genre: genre,
-    rating: 0,
-    pages: pages || 0
+    name: title, author, release_date: 0,
+    read_date: todayIsoDate(), status, genre, rating: 0, pages
   };
 
   try {
     await postBook(payload);
     closeModal();
     await loadBooks();
-    showToast(`"${title}" adicionado a sua biblioteca!`);
+    showToast(`"${title}" adicionado à sua biblioteca!`);
   } catch (e) {
     showToast('Falha ao salvar livro.');
   }
 });
 
-/* ─── SIDEBAR ────────────────────────────────────────────── */
+/* ─── EDIT / PROGRESS MODAL ───────────────────────── */
+const editOverlay = document.getElementById('editOverlay');
+let editingBook = null;
+let editRating = 0;
+let editProgressMode = 'pages';
+
+function openEditModal(b) {
+  editingBook = b;
+  editRating = b.rating;
+  editProgressMode = 'pages';
+
+  document.getElementById('editModalTitle').textContent = b.title;
+  document.getElementById('editStatus').value = b.status;
+
+  // Sliders
+  const pageSlider = document.getElementById('pageSlider');
+  pageSlider.max = b.pages || 100;
+  pageSlider.value = b.currentPage || 0;
+  document.getElementById('pageInput').value = b.currentPage || 0;
+  document.getElementById('pageInput').max = b.pages || 9999;
+  document.getElementById('pageVal').textContent = `${b.currentPage || 0} pág`;
+
+  const pctSlider = document.getElementById('pctSlider');
+  pctSlider.value = b.progress || 0;
+  document.getElementById('pctVal').textContent = (b.progress || 0) + '%';
+
+  // Stars
+  renderStars(editRating);
+
+  // Tabs
+  document.querySelectorAll('.progress-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('[data-mode="pages"]').classList.add('active');
+  document.getElementById('modePages').style.display = '';
+  document.getElementById('modePct').style.display = 'none';
+
+  editOverlay.classList.add('open');
+}
+
+function closeEditModal() {
+  editOverlay.classList.remove('open');
+  editingBook = null;
+}
+
+document.getElementById('closeEdit').addEventListener('click', closeEditModal);
+document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
+editOverlay.addEventListener('click', e => { if (e.target === editOverlay) closeEditModal(); });
+
+// Progress tabs
+document.querySelectorAll('.progress-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.progress-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    editProgressMode = tab.dataset.mode;
+    document.getElementById('modePages').style.display = editProgressMode === 'pages' ? '' : 'none';
+    document.getElementById('modePct').style.display  = editProgressMode === 'pct'   ? '' : 'none';
+  });
+});
+
+// Sync page slider ↔ input
+const pageSlider = document.getElementById('pageSlider');
+const pageInput  = document.getElementById('pageInput');
+pageSlider.addEventListener('input', () => {
+  pageInput.value = pageSlider.value;
+  document.getElementById('pageVal').textContent = pageSlider.value + ' pág';
+});
+pageInput.addEventListener('input', () => {
+  const v = Math.min(parseInt(pageInput.value)||0, parseInt(pageSlider.max));
+  pageSlider.value = v;
+  document.getElementById('pageVal').textContent = v + ' pág';
+});
+
+// Pct slider
+document.getElementById('pctSlider').addEventListener('input', function() {
+  document.getElementById('pctVal').textContent = this.value + '%';
+});
+
+// Star rating
+function renderStars(n) {
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.classList.toggle('on', parseInt(btn.dataset.star) <= n);
+  });
+}
+document.querySelectorAll('.star-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    editRating = parseInt(btn.dataset.star);
+    renderStars(editRating);
+  });
+});
+
+document.getElementById('saveEdit').addEventListener('click', async () => {
+  if (!editingBook) return;
+  const b = editingBook;
+
+  let currentPage;
+  if (editProgressMode === 'pages') {
+    currentPage = parseInt(document.getElementById('pageInput').value) || 0;
+  } else {
+    const pct = parseInt(document.getElementById('pctSlider').value) || 0;
+    currentPage = b.pages ? Math.round((pct / 100) * b.pages) : 0;
+  }
+
+  const newStatus = document.getElementById('editStatus').value;
+  const payload = {
+    status: newStatus,
+    rating: editRating,
+    current_page: newStatus === 'finished' ? (b.pages || currentPage) : currentPage,
+    read_date: todayIsoDate()
+  };
+
+  try {
+    await patchBook(b.id, payload);
+    await loadBooks();
+    closeEditModal();
+    showToast('Livro atualizado!');
+  } catch (e) {
+    showToast('Falha ao atualizar livro.');
+  }
+});
+
+/* ─── SIDEBAR FILTERS ─────────────────────────────── */
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
-function openSidebar(){ sidebar.classList.add('open'); sidebarOverlay.classList.add('open'); }
-function closeSidebar(){ sidebar.classList.remove('open'); sidebarOverlay.classList.remove('open'); }
+function openSidebar() { sidebar.classList.add('open'); sidebarOverlay.classList.add('open'); }
+function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('open'); }
 
 document.getElementById('openSidebar').addEventListener('click', openSidebar);
 document.getElementById('closeSidebar').addEventListener('click', closeSidebar);
 sidebarOverlay.addEventListener('click', closeSidebar);
 
-document.querySelectorAll('[data-genre]').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('[data-genre]').forEach(e=>e.classList.remove('active'));
+document.querySelectorAll('[data-genre]').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('[data-genre]').forEach(e => e.classList.remove('active'));
     el.classList.add('active');
     activeGenre = el.dataset.genre;
-    loadBooks();
+    renderBooks();
   });
 });
 
-document.querySelectorAll('[data-rating]').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('[data-rating]').forEach(e=>e.classList.remove('active'));
+document.querySelectorAll('[data-rating]').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('[data-rating]').forEach(e => e.classList.remove('active'));
     el.classList.add('active');
     activeRating = parseInt(el.dataset.rating);
-    loadBooks();
+    renderBooks();
   });
 });
 
-/* ─── THEME ──────────────────────────────────────────────── */
+document.getElementById('authorFilter').addEventListener('input', e => {
+  activeAuthor = e.target.value.trim();
+  renderBooks();
+});
+
+/* ─── THEME ───────────────────────────────────────── */
 const themeToggle = document.getElementById('themeToggle');
 let dark = false;
-themeToggle.addEventListener('click',()=>{
+themeToggle.addEventListener('click', () => {
   dark = !dark;
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   themeToggle.textContent = dark ? '☀' : '☽';
 });
 
-/* ─── TOAST ──────────────────────────────────────────────── */
-function showToast(msg){
+/* ─── TOAST ───────────────────────────────────────── */
+function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ─── INIT ───────────────────────────────────────────────── */
+/* ─── INIT ────────────────────────────────────────── */
 loadBooks();
 
-/* ─── DISCOVER PAGE ──────────────────────────────────────── */
+/* ─── PAGE NAVIGATION ─────────────────────────────── */
 const libraryPage  = document.getElementById('libraryPage');
 const discoverPage = document.getElementById('discoverPage');
+const statsPage    = document.getElementById('statsPage');
 const navDiscover  = document.getElementById('navDiscover');
+const navStats     = document.getElementById('navStats');
 let currentPage = 'library';
 let pendingBook = null;
 
 function showLibrary() {
   currentPage = 'library';
-  libraryPage.style.display  = '';
+  libraryPage.style.display = '';
   discoverPage.style.display = 'none';
+  statsPage.style.display = 'none';
   navDiscover.textContent = '🔍 Descobrir';
   navDiscover.classList.remove('btn--primary');
   navDiscover.classList.add('btn--ghost');
+  navStats.classList.remove('btn--primary');
+  navStats.classList.add('btn--ghost');
 }
 function showDiscover() {
   currentPage = 'discover';
-  libraryPage.style.display  = 'none';
+  libraryPage.style.display = 'none';
   discoverPage.style.display = '';
+  statsPage.style.display = 'none';
   navDiscover.textContent = '← Biblioteca';
   navDiscover.classList.remove('btn--ghost');
   navDiscover.classList.add('btn--primary');
+  navStats.classList.remove('btn--primary');
+  navStats.classList.add('btn--ghost');
+}
+function showStats() {
+  currentPage = 'stats';
+  libraryPage.style.display = 'none';
+  discoverPage.style.display = 'none';
+  statsPage.style.display = 'block';
+  navStats.textContent = '← Biblioteca';
+  navStats.classList.remove('btn--ghost');
+  navStats.classList.add('btn--primary');
+  navDiscover.textContent = '🔍 Descobrir';
+  navDiscover.classList.remove('btn--primary');
+  navDiscover.classList.add('btn--ghost');
+  renderStats();
 }
 
 navDiscover.addEventListener('click', () => {
-  currentPage === 'library' ? showDiscover() : showLibrary();
+  currentPage === 'discover' ? showLibrary() : showDiscover();
+});
+navStats.addEventListener('click', () => {
+  currentPage === 'stats' ? showLibrary() : showStats();
 });
 
+/* ─── STATS ───────────────────────────────────────── */
+function renderStats() {
+  const year = new Date().getFullYear();
+  const finished = books.filter(b => b.status === 'finished');
+  const reading  = books.filter(b => b.status === 'reading');
+  const totalPages = finished.reduce((s, b) => s + b.pages, 0);
+  const avgRating = finished.length
+    ? (finished.reduce((s,b) => s + b.rating, 0) / finished.length).toFixed(1)
+    : '—';
+  const thisYear = books.filter(b => b.readDate && new Date(b.readDate).getFullYear() === year);
+
+  document.getElementById('statsCards').innerHTML = [
+    { num: books.length,     lbl: 'Livros na biblioteca' },
+    { num: finished.length,  lbl: 'Finalizados' },
+    { num: reading.length,   lbl: 'Lendo agora' },
+    { num: totalPages,       lbl: 'Páginas lidas (total)' },
+    { num: avgRating,        lbl: 'Nota média' },
+    { num: thisYear.length,  lbl: `Livros em ${year}` },
+  ].map(s => `
+    <div class="stat-card">
+      <div class="stat-card__num">${s.num}</div>
+      <div class="stat-card__lbl">${s.lbl}</div>
+    </div>
+  `).join('');
+
+  // Pages per month chart
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const pagesByMonth = months.map((_, i) => {
+    const m = i + 1;
+    return finished
+      .filter(b => b.readDate && new Date(b.readDate).getFullYear() === year && new Date(b.readDate).getMonth() + 1 === m)
+      .reduce((s, b) => s + b.pages, 0);
+  });
+  const maxPBM = Math.max(...pagesByMonth, 1);
+
+  document.getElementById('pagesChart').innerHTML = pagesByMonth.map((v, i) => `
+    <div class="bar-col">
+      <div class="bar-col__val">${v || ''}</div>
+      <div class="bar-col__bar-wrap">
+        <div class="bar-col__bar" style="height:${Math.round((v/maxPBM)*100)}%"></div>
+      </div>
+      <div class="bar-col__label">${months[i]}</div>
+    </div>
+  `).join('');
+
+  // Author table
+  const authorMap = {};
+  books.forEach(b => {
+    if (!authorMap[b.author]) authorMap[b.author] = { count:0, pages:0, ratings:[], totalRating:0 };
+    authorMap[b.author].count++;
+    authorMap[b.author].pages += b.pages;
+    if (b.rating) { authorMap[b.author].ratings.push(b.rating); authorMap[b.author].totalRating += b.rating; }
+  });
+  const authors = Object.entries(authorMap).sort((a,b) => b[1].count - a[1].count);
+  document.getElementById('authorTable').innerHTML = authors.map(([a, d]) => `
+    <tr>
+      <td>${a}</td>
+      <td>${d.count}</td>
+      <td>${d.pages.toLocaleString()}</td>
+      <td>${d.ratings.length ? (d.totalRating/d.ratings.length).toFixed(1) : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+/* ─── DISCOVER ────────────────────────────────────── */
 async function searchGoogleBooks(query) {
   const url = `/book/search/?q=${encodeURIComponent(query)}&maxResults=20`;
   const res = await fetch(url);
@@ -607,7 +1010,7 @@ function extractBook(item) {
   const v = item.volumeInfo || {};
   return {
     gbId:        item.id,
-    title:       v.title || 'Titulo desconhecido',
+    title:       v.title || 'Título desconhecido',
     author:      (v.authors || ['Autor desconhecido']).join(', '),
     pages:       v.pageCount || 0,
     genre:       (v.categories || ['Outro'])[0].split('/')[0].trim(),
@@ -622,15 +1025,12 @@ function extractBook(item) {
 async function doSearch() {
   const q = document.getElementById('discoverInput').value.trim();
   if (!q) return;
-
   document.getElementById('discoverPlaceholder').style.display = 'none';
   document.getElementById('discoverSpinner').style.display = 'flex';
   document.getElementById('discoverResults').style.display = 'none';
-
   try {
     const data = await searchGoogleBooks(q);
-    const items = data.items || [];
-    renderResults(items, q);
+    renderResults(data.items || [], q);
   } catch(e) {
     showToast('Busca falhou. Verifique sua chave de API ou rede.');
     document.getElementById('discoverPlaceholder').style.display = '';
@@ -647,7 +1047,7 @@ function renderResults(items, q) {
     return;
   }
 
-  const books = items.map(extractBook);
+  const booksRes = items.map(extractBook);
   const inLib = b => window._books.some(lb => lb.title.toLowerCase() === b.title.toLowerCase());
 
   el.innerHTML = `
@@ -655,7 +1055,7 @@ function renderResults(items, q) {
       <span class="results-count">${items.length} resultados para "<strong>${q}</strong>"</span>
     </div>
     <div class="discover-results" id="resultsGrid">
-    ${books.map((b,i) => `
+    ${booksRes.map((b,i) => `
       <div class="result-card" data-idx="${i}" style="animation-delay:${i*30}ms">
         <div class="result-card__img">
           ${b.cover
@@ -671,7 +1071,7 @@ function renderResults(items, q) {
           </div>
         </div>
         <div class="result-card__footer">
-          <span class="result-card__pages">${b.pages ? b.pages+' pag' : 'Paginas desconhecidas'}</span>
+          <span class="result-card__pages">${b.pages ? b.pages+' pág' : 'Páginas desconhecidas'}</span>
           <button class="btn--add ${inLib(b)?'added':''}" data-idx="${i}">
             ${inLib(b) ? '✓ Na biblioteca' : '+ Adicionar'}
           </button>
@@ -681,35 +1081,27 @@ function renderResults(items, q) {
     </div>
   `;
   el.style.display = 'block';
+  el._results = booksRes;
 
-  // Store results for lookup
-  el._results = books;
-
-  // Card click → detail modal
   el.querySelectorAll('.result-card').forEach(card => {
     card.addEventListener('click', e => {
       if (e.target.classList.contains('btn--add')) return;
-      const b = el._results[parseInt(card.dataset.idx)];
-      openDetailModal(b);
+      openDetailModal(el._results[parseInt(card.dataset.idx)]);
     });
   });
 
-  // Quick-add button
   el.querySelectorAll('.btn--add').forEach(btn => {
     btn.addEventListener('click', async e => {
       e.stopPropagation();
       const b = el._results[parseInt(btn.dataset.idx)];
       if (btn.classList.contains('added')) return;
       const ok = await addBookToLibrary(b, 'planned');
-      if (ok) {
-        btn.textContent = '✓ Na biblioteca';
-        btn.classList.add('added');
-      }
+      if (ok) { btn.textContent = '✓ Na biblioteca'; btn.classList.add('added'); }
     });
   });
 }
 
-/* ─── DETAIL MODAL ───────────────────────────────────────── */
+/* ─── DETAIL MODAL ────────────────────────────────── */
 const detailOverlay = document.getElementById('detailOverlay');
 
 function openDetailModal(b) {
@@ -731,7 +1123,7 @@ function openDetailModal(b) {
         ${b.publisher ? `<span class="detail-tag">${b.publisher}</span>` : ''}
       </div>
       <div class="detail-stats">
-        ${b.pages ? `<div class="detail-stat"><span class="detail-stat__num">${b.pages}</span><span class="detail-stat__lbl">Paginas</span></div>` : ''}
+        ${b.pages ? `<div class="detail-stat"><span class="detail-stat__num">${b.pages}</span><span class="detail-stat__lbl">Páginas</span></div>` : ''}
         ${b.year  ? `<div class="detail-stat"><span class="detail-stat__num">${b.year}</span><span class="detail-stat__lbl">Publicado</span></div>` : ''}
       </div>
       ${b.description ? `<div class="detail-desc">${b.description}</div>` : ''}
@@ -758,20 +1150,15 @@ document.getElementById('confirmAddBook').addEventListener('click', async () => 
 
 async function addBookToLibrary(b, status) {
   const payload = {
-    name: b.title,
-    author: b.author,
+    name: b.title, author: b.author,
     release_date: parseInt(b.year) || 0,
-    read_date: todayIsoDate(),
-    status: status,
-    genre: b.genre || 'Outro',
-    rating: 0,
-    pages: b.pages || 0
+    read_date: todayIsoDate(), status,
+    genre: b.genre || 'Outro', rating: 0, pages: b.pages || 0
   };
-
   try {
     await postBook(payload);
     await loadBooks();
-    showToast(`"${b.title}" adicionado a sua biblioteca!`);
+    showToast(`"${b.title}" adicionado à sua biblioteca!`);
     return true;
   } catch (e) {
     showToast('Falha ao salvar livro.');
@@ -779,12 +1166,10 @@ async function addBookToLibrary(b, status) {
   }
 }
 
-/* ─── WIRE UP DISCOVER SEARCH ────────────────────────────── */
 document.getElementById('discoverBtn').addEventListener('click', doSearch);
 document.getElementById('discoverInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
 });
-
 </script>
 </body>
 </html>
