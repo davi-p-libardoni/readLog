@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module DBAccess (initDB,insertBook,getBooks) where
+module DBAccess (initDB,insertBook,getBooks,removeBook) where
 
 import Database.PostgreSQL.Simple
 import Data.Int (Int64)
@@ -27,3 +27,6 @@ insertBook conn book =
 
 getBooks :: Connection -> IO [Book]
 getBooks conn = query_ conn "SELECT id, name, author, release_date, read_date, status, genre, rating, pages FROM books"
+
+removeBook :: Connection -> Int -> IO Int64
+removeBook conn id = execute conn "DELETE FROM books WHERE id = ?" (Only id)

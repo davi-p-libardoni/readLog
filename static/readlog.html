@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Readlog — Your Reading Life, Organized</title>
+<title>Readlog — Sua vida de leitura, organizada</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
@@ -16,14 +16,14 @@
 
   <div class="nav__search">
     <span class="nav__search__icon">⌕</span>
-    <input type="text" id="searchInput" placeholder="Search your library…" autocomplete="off" />
+    <input type="text" id="searchInput" placeholder="Buscar na sua biblioteca…" autocomplete="off" />
   </div>
 
   <div class="nav__actions">
-    <button class="btn btn--ghost" id="navDiscover">🔍 Discover</button>
-    <button class="btn btn--ghost" id="openSidebar">⇄ Sort</button>
-    <button class="btn btn--primary" id="openModal">+ Add Book</button>
-    <button class="theme-toggle" id="themeToggle" title="Toggle theme">☽</button>
+    <button class="btn btn--ghost" id="navDiscover">🔍 Descobrir</button>
+    <button class="btn btn--ghost" id="openSidebar">⇄ Ordenar</button>
+    <button class="btn btn--primary" id="openModal">+ Adicionar livro</button>
+    <button class="theme-toggle" id="themeToggle" title="Alternar tema">☽</button>
   </div>
 </nav>
 
@@ -31,20 +31,20 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero__text">
-    <div class="hero__label" id="heroLabel">Currently Reading</div>
+    <div class="hero__label" id="heroLabel">Lendo agora</div>
     <h1 class="hero__title">
-      <em id="heroTitle">The Brothers Karamazov</em>
+      <em id="heroTitle"></em>
     </h1>
     <div class="hero__meta">
-      <span class="hero__meta__author" id="heroAuthor">Fyodor Dostoevsky</span>
+      <span class="hero__meta__author" id="heroAuthor"></span>
       <span class="hero__meta__sep">·</span>
-      <span id="heroMeta">Fiction · Classic</span>
+      <span id="heroMeta"></span>
     </div>
 
     <div class="progress-wrap">
       <div class="progress-label">
-        <span id="heroPageLabel">Pages: 796</span>
-        <span id="pct">52%</span>
+        <span id="heroPageLabel"></span>
+        <span id="pct"></span>
       </div>
       <div class="progress-bar">
         <div class="progress-bar__fill" id="heroProgress"></div>
@@ -53,16 +53,16 @@
 
     <div class="hero__stats">
       <div class="stat">
-        <span class="stat__num" id="daysLeft">18</span>
-        <span class="stat__lbl">Days Left</span>
+        <span class="stat__num" id="daysLeft"></span>
+        <span class="stat__lbl">Dias restantes</span>
       </div>
       <div class="stat">
-        <span class="stat__num" id="pagesPerDay">23</span>
-        <span class="stat__lbl">Pages / Day</span>
+        <span class="stat__num" id="pagesPerDay"></span>
+        <span class="stat__lbl">Páginas / dia</span>
       </div>
       <div class="stat">
-        <span class="stat__num" id="booksThisYear">7</span>
-        <span class="stat__lbl">Books This Year</span>
+        <span class="stat__num" id="booksThisYear"></span>
+        <span class="stat__lbl">Livros neste ano</span>
       </div>
     </div>
   </div>
@@ -72,22 +72,22 @@
       <div class="cover-card">
         <div class="cover-card__deco"></div>
         <div class="cover-card__inner">
-          <div class="cover-card__title" id="coverTitle1">Crime and Punishment</div>
-          <div class="cover-card__author" id="coverAuthor1">Dostoevsky</div>
+          <div class="cover-card__title" id="coverTitle1"></div>
+          <div class="cover-card__author" id="coverAuthor1"></div>
         </div>
       </div>
       <div class="cover-card">
         <div class="cover-card__deco"></div>
         <div class="cover-card__inner">
-          <div class="cover-card__title" id="coverTitle2">The Idiot</div>
-          <div class="cover-card__author" id="coverAuthor2">Dostoevsky</div>
+          <div class="cover-card__title" id="coverTitle2"></div>
+          <div class="cover-card__author" id="coverAuthor2"></div>
         </div>
       </div>
       <div class="cover-card">
         <div class="cover-card__deco"></div>
         <div class="cover-card__inner">
-          <div class="cover-card__title" id="coverTitle3">The Brothers Karamazov</div>
-          <div class="cover-card__author" id="coverAuthor3">Dostoevsky · 1880</div>
+          <div class="cover-card__title" id="coverTitle3"></div>
+          <div class="cover-card__author" id="coverAuthor3"></div>
         </div>
       </div>
     </div>
@@ -96,19 +96,19 @@
 
 <!-- FILTERS -->
 <div class="filters">
-  <button class="filter-chip active" data-filter="all">All</button>
-  <button class="filter-chip" data-filter="reading">Reading</button>
-  <button class="filter-chip" data-filter="planned">Planned</button>
-  <button class="filter-chip" data-filter="finished">Finished</button>
-  <button class="filter-chip" data-filter="dropped">Dropped</button>
+  <button class="filter-chip active" data-filter="all">Todos</button>
+  <button class="filter-chip" data-filter="reading">Lendo</button>
+  <button class="filter-chip" data-filter="planned">Planejado</button>
+  <button class="filter-chip" data-filter="finished">Finalizado</button>
+  <button class="filter-chip" data-filter="dropped">Abandonado</button>
 
   <div class="filters__sort">
-    <span>Sort by</span>
+    <span>Ordenar por</span>
     <select id="sortSelect">
-      <option value="title">Title</option>
-      <option value="author">Author</option>
-      <option value="rating">Rating</option>
-      <option value="pages">Pages</option>
+      <option value="title">Titulo</option>
+      <option value="author">Autor</option>
+      <option value="rating">Nota</option>
+      <option value="pages">Paginas</option>
     </select>
   </div>
 </div>
@@ -124,23 +124,23 @@
   <div class="discover-hero">
     <div class="discover-hero__inner">
       <div class="discover-hero__eyebrow">Google Books</div>
-      <h2 class="discover-hero__title">Discover your next<br><em>great read</em></h2>
-      <p class="discover-hero__sub">Search millions of books and add them to your library in one click.</p>
+      <h2 class="discover-hero__title">Descubra sua proxima<br><em>grande leitura</em></h2>
+      <p class="discover-hero__sub">Pesquise milhoes de livros e adicione a sua biblioteca com um clique.</p>
       <div class="discover-search-wrap">
         <span class="discover-search-icon">⌕</span>
-        <input type="text" id="discoverInput" placeholder="Search by title, author, or ISBN…" autocomplete="off" />
-        <button class="btn btn--primary" id="discoverBtn">Search</button>
+        <input type="text" id="discoverInput" placeholder="Buscar por titulo, autor ou ISBN…" autocomplete="off" />
+        <button class="btn btn--primary" id="discoverBtn">Buscar</button>
       </div>
     </div>
   </div>
   <div class="discover-body">
     <div class="discover-placeholder" id="discoverPlaceholder">
       <div class="discover-placeholder__icon">&#x1F4D6;</div>
-      <div class="discover-placeholder__text">Start typing to search the Google Books catalogue</div>
+      <div class="discover-placeholder__text">Comece a digitar para pesquisar no catalogo do Google Books</div>
     </div>
     <div class="discover-spinner" id="discoverSpinner" style="display:none">
       <div class="spinner"></div>
-      <span>Searching…</span>
+      <span>Buscando…</span>
     </div>
     <div class="discover-results" id="discoverResults" style="display:none"></div>
   </div>
@@ -150,18 +150,18 @@
 <div class="overlay" id="detailOverlay">
   <div class="modal modal--wide">
     <div class="modal__header">
-      <span class="modal__title" id="detailTitle">Book Details</span>
+      <span class="modal__title" id="detailTitle">Detalhes do livro</span>
       <button class="modal__close" id="closeDetail">✕</button>
     </div>
     <div class="modal__body modal__body--row" id="detailBody"></div>
     <div class="modal__footer">
-      <button class="btn btn--ghost" id="cancelDetail">Cancel</button>
+      <button class="btn btn--ghost" id="cancelDetail">Cancelar</button>
       <select id="detailStatus" class="status-select">
-        <option value="planned">Add as Planned</option>
-        <option value="reading">Add as Reading</option>
-        <option value="finished">Add as Finished</option>
+        <option value="planned">Adicionar como Planejado</option>
+        <option value="reading">Adicionar como Lendo</option>
+        <option value="finished">Adicionar como Finalizado</option>
       </select>
-      <button class="btn btn--primary" id="confirmAddBook">+ Add to Library</button>
+      <button class="btn btn--primary" id="confirmAddBook">+ Adicionar a biblioteca</button>
     </div>
   </div>
 </div>
@@ -170,41 +170,41 @@
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal__header">
-      <span class="modal__title">Add a new book</span>
+      <span class="modal__title">Adicionar novo livro</span>
       <button class="modal__close" id="closeModal">✕</button>
     </div>
     <div class="modal__body">
       <div class="field">
-        <label>Title</label>
-        <input type="text" id="newTitle" placeholder="Book title…" />
+        <label>Titulo</label>
+        <input type="text" id="newTitle" placeholder="Titulo do livro…" />
       </div>
       <div class="field">
-        <label>Author</label>
-        <input type="text" id="newAuthor" placeholder="Author name…" />
+        <label>Autor</label>
+        <input type="text" id="newAuthor" placeholder="Nome do autor…" />
       </div>
       <div class="field-row">
         <div class="field">
           <label>Status</label>
           <select id="newStatus">
-            <option value="planned">Planned</option>
-            <option value="reading">Reading</option>
-            <option value="finished">Finished</option>
-            <option value="dropped">Dropped</option>
+            <option value="planned">Planejado</option>
+            <option value="reading">Lendo</option>
+            <option value="finished">Finalizado</option>
+            <option value="dropped">Abandonado</option>
           </select>
         </div>
         <div class="field">
-          <label>Pages</label>
-          <input type="number" id="newPages" placeholder="e.g. 320" min="1" />
+          <label>Paginas</label>
+          <input type="number" id="newPages" placeholder="ex: 320" min="1" />
         </div>
       </div>
       <div class="field">
-        <label>Genre</label>
-        <input type="text" id="newGenre" placeholder="Fiction, Fantasy, Non-fiction…" />
+        <label>Genero</label>
+        <input type="text" id="newGenre" placeholder="Ficcao, Fantasia, Nao ficcao…" />
       </div>
     </div>
     <div class="modal__footer">
-      <button class="btn btn--ghost" id="cancelModal">Cancel</button>
-      <button class="btn btn--primary" id="saveBook">Save Book</button>
+      <button class="btn btn--ghost" id="cancelModal">Cancelar</button>
+      <button class="btn btn--primary" id="saveBook">Salvar livro</button>
     </div>
   </div>
 </div>
@@ -213,38 +213,38 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="sidebar" id="sidebar">
   <div class="sidebar__title">
-    Filter & Sort
+    Filtro e ordenacao
     <button class="modal__close" id="closeSidebar">✕</button>
   </div>
 
   <div class="sidebar__section">
-    <h4>Genre</h4>
+    <h4>Genero</h4>
     <div class="sidebar__option active" data-genre="all">
-      <span class="sidebar__option__dot" style="background:var(--ink3)"></span>All Genres
+      <span class="sidebar__option__dot" style="background:var(--ink3)"></span>Todos os generos
     </div>
     <div class="sidebar__option" data-genre="Fiction">
-      <span class="sidebar__option__dot" style="background:#3A6B8A"></span>Fiction
+      <span class="sidebar__option__dot" style="background:#3A6B8A"></span>Ficcao
     </div>
     <div class="sidebar__option" data-genre="Classic">
-      <span class="sidebar__option__dot" style="background:#8B6B4A"></span>Classic
+      <span class="sidebar__option__dot" style="background:#8B6B4A"></span>Classico
     </div>
     <div class="sidebar__option" data-genre="Fantasy">
-      <span class="sidebar__option__dot" style="background:#4A7C59"></span>Fantasy
+      <span class="sidebar__option__dot" style="background:#4A7C59"></span>Fantasia
     </div>
     <div class="sidebar__option" data-genre="Non-fiction">
-      <span class="sidebar__option__dot" style="background:#C8593A"></span>Non-fiction
+      <span class="sidebar__option__dot" style="background:#C8593A"></span>Nao ficcao
     </div>
     <div class="sidebar__option" data-genre="Sci-fi">
-      <span class="sidebar__option__dot" style="background:#6B4A8B"></span>Sci-fi
+      <span class="sidebar__option__dot" style="background:#6B4A8B"></span>Ficcao cientifica
     </div>
   </div>
 
   <div class="sidebar__section">
-    <h4>Rating</h4>
-    <div class="sidebar__option" data-rating="5">⭐⭐⭐⭐⭐ &nbsp;5 stars</div>
-    <div class="sidebar__option" data-rating="4">⭐⭐⭐⭐ &nbsp;4+ stars</div>
-    <div class="sidebar__option" data-rating="3">⭐⭐⭐ &nbsp;3+ stars</div>
-    <div class="sidebar__option" data-rating="0">Any rating</div>
+    <h4>Avaliacao</h4>
+    <div class="sidebar__option" data-rating="5">⭐⭐⭐⭐⭐ &nbsp;5 estrelas</div>
+    <div class="sidebar__option" data-rating="4">⭐⭐⭐⭐ &nbsp;4+ estrelas</div>
+    <div class="sidebar__option" data-rating="3">⭐⭐⭐ &nbsp;3+ estrelas</div>
+    <div class="sidebar__option" data-rating="0">Qualquer nota</div>
   </div>
 </div>
 
@@ -285,7 +285,7 @@ function normalizeBook(b){
     title: b.name,
     author: b.author,
     status: b.status || 'planned',
-    genre: b.genre || 'Other',
+    genre: b.genre || 'Outro',
     pages: b.pages || 0,
     progress: computeProgress(b.status),
     rating: Math.round(b.rating || 0),
@@ -296,7 +296,20 @@ function normalizeBook(b){
 
 async function loadBooks(){
   try {
-    const res = await fetch('/books');
+    const params = new URLSearchParams();
+    if (activeFilter !== 'all') params.set('status', activeFilter);
+    if (activeGenre !== 'all') params.set('genre', activeGenre);
+    if (activeRating > 0) params.set('rating', String(activeRating));
+    if (searchQuery) params.set('q', searchQuery);
+
+    const sort = document.getElementById('sortSelect').value;
+    params.set('sort', sort);
+    if (sort === 'rating' || sort === 'pages') {
+      params.set('order', 'desc');
+    }
+
+    const url = params.toString() ? `/books?${params.toString()}` : '/books';
+    const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     books = data.map(normalizeBook);
@@ -304,7 +317,7 @@ async function loadBooks(){
     renderBooks();
     updateHero();
   } catch (e) {
-    showToast('Failed to load books from server.');
+    showToast('Falha ao carregar livros do servidor.');
     books = [];
     window._books = books;
     renderBooks();
@@ -325,41 +338,28 @@ async function postBook(payload){
   if (!res.ok) throw new Error('HTTP ' + res.status);
 }
 
+async function deleteBookById(id){
+  const res = await fetch(`/book/${id}`, { method: 'DELETE' });
+  if (!res.ok && res.status !== 404) throw new Error('HTTP ' + res.status);
+}
+
 /* ─── RENDER ──────────────────────────────────────────────── */
 function statusLabel(s){
-  return {reading:'In Progress',planned:'Planned',finished:'Finished',dropped:'Dropped'}[s]||s;
+  return {reading:'Em leitura',planned:'Planejado',finished:'Finalizado',dropped:'Abandonado'}[s]||s;
 }
 function stars(n){
-  if(!n) return '<span style="color:var(--ink3);font-size:.75rem">Not rated</span>';
+  if(!n) return '<span style="color:var(--ink3);font-size:.75rem">Sem avaliacao</span>';
   return '★'.repeat(n)+'☆'.repeat(5-n);
 }
 
 function renderBooks(){
   const grid = document.getElementById('bookGrid');
-  let filtered = books.filter(b=>{
-    const matchFilter = activeFilter==='all' || b.status===activeFilter;
-    const matchGenre  = activeGenre==='all'  || b.genre===activeGenre;
-    const matchRating = b.rating>=activeRating;
-    const matchSearch = !searchQuery ||
-      b.title.toLowerCase().includes(searchQuery) ||
-      b.author.toLowerCase().includes(searchQuery);
-    return matchFilter && matchGenre && matchRating && matchSearch;
-  });
-
-  const sort = document.getElementById('sortSelect').value;
-  filtered.sort((a,b)=>{
-    if(sort==='rating') return b.rating - a.rating;
-    if(sort==='pages')  return b.pages  - a.pages;
-    if(sort==='author') return a.author.localeCompare(b.author);
-    return a.title.localeCompare(b.title);
-  });
-
-  if(!filtered.length){
-    grid.innerHTML = `<div class="empty"><div class="empty__icon">📚</div><div class="empty__text">No books match this filter.</div></div>`;
+  if(!books.length){
+    grid.innerHTML = `<div class="empty"><div class="empty__icon">📚</div><div class="empty__text">Nenhum livro corresponde a este filtro.</div></div>`;
     return;
   }
 
-  grid.innerHTML = filtered.map((b,i)=>{
+  grid.innerHTML = books.map((b,i)=>{
     const color = COLORS[b.id % COLORS.length];
     const initial = b.title[0];
     return `
@@ -373,21 +373,35 @@ function renderBooks(){
       </div>
       <div class="book-card__footer">
         <div class="book-card__rating">${stars(b.rating)}</div>
-        <div class="book-card__pages">${b.pages} pp</div>
+        <div class="book-card__pages">${b.pages} pag</div>
+        <button class="book-card__remove" data-id="${b.id}">Remover</button>
       </div>
     </div>`;
   }).join('');
+
+  grid.querySelectorAll('.book-card__remove').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      try {
+        await deleteBookById(id);
+        await loadBooks();
+      } catch (err) {
+        showToast('Falha ao remover livro.');
+      }
+    });
+  });
 }
 
 /* ─── HERO ───────────────────────────────────────────────── */
 function updateHero(){
   const hero = books.find(b => b.status === 'reading') || books[0];
   if (!hero) {
-    document.getElementById('heroLabel').textContent = 'Library';
-    document.getElementById('heroTitle').textContent = 'No books yet';
-    document.getElementById('heroAuthor').textContent = 'Add your first book';
-    document.getElementById('heroMeta').textContent = 'Start building your shelf';
-    document.getElementById('heroPageLabel').textContent = 'Pages: --';
+    document.getElementById('heroLabel').textContent = 'Biblioteca';
+    document.getElementById('heroTitle').textContent = 'Nenhum livro ainda';
+    document.getElementById('heroAuthor').textContent = 'Adicione seu primeiro livro';
+    document.getElementById('heroMeta').textContent = 'Comece a montar sua estante';
+    document.getElementById('heroPageLabel').textContent = 'Paginas: --';
     document.getElementById('pct').textContent = '0%';
     document.getElementById('heroProgress').style.width = '0%';
     document.getElementById('daysLeft').textContent = '--';
@@ -397,14 +411,14 @@ function updateHero(){
     return;
   }
 
-  document.getElementById('heroLabel').textContent = hero.status === 'reading' ? 'Currently Reading' : 'Featured Book';
+  document.getElementById('heroLabel').textContent = hero.status === 'reading' ? 'Lendo agora' : 'Livro em destaque';
   document.getElementById('heroTitle').textContent = hero.title;
   document.getElementById('heroAuthor').textContent = hero.author;
   const metaBits = [];
   if (hero.genre) metaBits.push(hero.genre);
   if (hero.releaseDate) metaBits.push(String(hero.releaseDate));
-  document.getElementById('heroMeta').textContent = metaBits.join(' · ') || 'Unknown';
-  document.getElementById('heroPageLabel').textContent = `Pages: ${hero.pages || '--'}`;
+  document.getElementById('heroMeta').textContent = metaBits.join(' · ') || 'Desconhecido';
+  document.getElementById('heroPageLabel').textContent = `Paginas: ${hero.pages || '--'}`;
 
   const pct = Math.max(0, Math.min(100, hero.progress || 0));
   document.getElementById('pct').textContent = pct + '%';
@@ -449,18 +463,18 @@ document.querySelectorAll('.filter-chip').forEach(btn=>{
     document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     activeFilter = btn.dataset.filter;
-    renderBooks();
+    loadBooks();
   });
 });
 
 /* ─── SEARCH ──────────────────────────────────────────────── */
 document.getElementById('searchInput').addEventListener('input', e=>{
   searchQuery = e.target.value.toLowerCase().trim();
-  renderBooks();
+  loadBooks();
 });
 
 /* ─── SORT ────────────────────────────────────────────────── */
-document.getElementById('sortSelect').addEventListener('change', renderBooks);
+document.getElementById('sortSelect').addEventListener('change', loadBooks);
 
 /* ─── MODAL ──────────────────────────────────────────────── */
 const overlay = document.getElementById('overlay');
@@ -481,9 +495,9 @@ document.getElementById('saveBook').addEventListener('click', async ()=>{
   const author = document.getElementById('newAuthor').value.trim();
   const status = document.getElementById('newStatus').value;
   const pages  = parseInt(document.getElementById('newPages').value)||0;
-  const genre  = document.getElementById('newGenre').value.trim()||'Other';
+  const genre  = document.getElementById('newGenre').value.trim()||'Outro';
 
-  if(!title||!author){ showToast('Please fill in title and author.'); return; }
+  if(!title||!author){ showToast('Preencha titulo e autor.'); return; }
 
   const payload = {
     name: title,
@@ -500,9 +514,9 @@ document.getElementById('saveBook').addEventListener('click', async ()=>{
     await postBook(payload);
     closeModal();
     await loadBooks();
-    showToast(`"${title}" added to your library!`);
+    showToast(`"${title}" adicionado a sua biblioteca!`);
   } catch (e) {
-    showToast('Failed to save book.');
+    showToast('Falha ao salvar livro.');
   }
 });
 
@@ -521,7 +535,7 @@ document.querySelectorAll('[data-genre]').forEach(el=>{
     document.querySelectorAll('[data-genre]').forEach(e=>e.classList.remove('active'));
     el.classList.add('active');
     activeGenre = el.dataset.genre;
-    renderBooks();
+    loadBooks();
   });
 });
 
@@ -530,7 +544,7 @@ document.querySelectorAll('[data-rating]').forEach(el=>{
     document.querySelectorAll('[data-rating]').forEach(e=>e.classList.remove('active'));
     el.classList.add('active');
     activeRating = parseInt(el.dataset.rating);
-    renderBooks();
+    loadBooks();
   });
 });
 
@@ -565,7 +579,7 @@ function showLibrary() {
   currentPage = 'library';
   libraryPage.style.display  = '';
   discoverPage.style.display = 'none';
-  navDiscover.textContent = '🔍 Discover';
+  navDiscover.textContent = '🔍 Descobrir';
   navDiscover.classList.remove('btn--primary');
   navDiscover.classList.add('btn--ghost');
 }
@@ -573,7 +587,7 @@ function showDiscover() {
   currentPage = 'discover';
   libraryPage.style.display  = 'none';
   discoverPage.style.display = '';
-  navDiscover.textContent = '← Library';
+  navDiscover.textContent = '← Biblioteca';
   navDiscover.classList.remove('btn--ghost');
   navDiscover.classList.add('btn--primary');
 }
@@ -593,10 +607,10 @@ function extractBook(item) {
   const v = item.volumeInfo || {};
   return {
     gbId:        item.id,
-    title:       v.title || 'Unknown Title',
-    author:      (v.authors || ['Unknown Author']).join(', '),
+    title:       v.title || 'Titulo desconhecido',
+    author:      (v.authors || ['Autor desconhecido']).join(', '),
     pages:       v.pageCount || 0,
-    genre:       (v.categories || ['Other'])[0].split('/')[0].trim(),
+    genre:       (v.categories || ['Outro'])[0].split('/')[0].trim(),
     description: v.description || '',
     cover:       v.imageLinks ? (v.imageLinks.thumbnail || v.imageLinks.smallThumbnail || '') : '',
     year:        v.publishedDate ? v.publishedDate.slice(0,4) : '',
@@ -618,7 +632,7 @@ async function doSearch() {
     const items = data.items || [];
     renderResults(items, q);
   } catch(e) {
-    showToast('Search failed. Check your API key or network.');
+    showToast('Busca falhou. Verifique sua chave de API ou rede.');
     document.getElementById('discoverPlaceholder').style.display = '';
   } finally {
     document.getElementById('discoverSpinner').style.display = 'none';
@@ -628,7 +642,7 @@ async function doSearch() {
 function renderResults(items, q) {
   const el = document.getElementById('discoverResults');
   if (!items.length) {
-    el.innerHTML = `<div class="empty"><div class="empty__icon">🔍</div><div class="empty__text">No results for "<strong>${q}</strong>"</div></div>`;
+    el.innerHTML = `<div class="empty"><div class="empty__icon">🔍</div><div class="empty__text">Nenhum resultado para "<strong>${q}</strong>"</div></div>`;
     el.style.display = 'block';
     return;
   }
@@ -638,7 +652,7 @@ function renderResults(items, q) {
 
   el.innerHTML = `
     <div class="results-header">
-      <span class="results-count">${items.length} results for "<strong>${q}</strong>"</span>
+      <span class="results-count">${items.length} resultados para "<strong>${q}</strong>"</span>
     </div>
     <div class="discover-results" id="resultsGrid">
     ${books.map((b,i) => `
@@ -657,9 +671,9 @@ function renderResults(items, q) {
           </div>
         </div>
         <div class="result-card__footer">
-          <span class="result-card__pages">${b.pages ? b.pages+' pp' : 'Pages unknown'}</span>
+          <span class="result-card__pages">${b.pages ? b.pages+' pag' : 'Paginas desconhecidas'}</span>
           <button class="btn--add ${inLib(b)?'added':''}" data-idx="${i}">
-            ${inLib(b) ? '✓ In Library' : '+ Add'}
+            ${inLib(b) ? '✓ Na biblioteca' : '+ Adicionar'}
           </button>
         </div>
       </div>
@@ -688,7 +702,7 @@ function renderResults(items, q) {
       if (btn.classList.contains('added')) return;
       const ok = await addBookToLibrary(b, 'planned');
       if (ok) {
-        btn.textContent = '✓ In Library';
+        btn.textContent = '✓ Na biblioteca';
         btn.classList.add('added');
       }
     });
@@ -717,8 +731,8 @@ function openDetailModal(b) {
         ${b.publisher ? `<span class="detail-tag">${b.publisher}</span>` : ''}
       </div>
       <div class="detail-stats">
-        ${b.pages ? `<div class="detail-stat"><span class="detail-stat__num">${b.pages}</span><span class="detail-stat__lbl">Pages</span></div>` : ''}
-        ${b.year  ? `<div class="detail-stat"><span class="detail-stat__num">${b.year}</span><span class="detail-stat__lbl">Published</span></div>` : ''}
+        ${b.pages ? `<div class="detail-stat"><span class="detail-stat__num">${b.pages}</span><span class="detail-stat__lbl">Paginas</span></div>` : ''}
+        ${b.year  ? `<div class="detail-stat"><span class="detail-stat__num">${b.year}</span><span class="detail-stat__lbl">Publicado</span></div>` : ''}
       </div>
       ${b.description ? `<div class="detail-desc">${b.description}</div>` : ''}
     </div>
@@ -749,7 +763,7 @@ async function addBookToLibrary(b, status) {
     release_date: parseInt(b.year) || 0,
     read_date: todayIsoDate(),
     status: status,
-    genre: b.genre || 'Other',
+    genre: b.genre || 'Outro',
     rating: 0,
     pages: b.pages || 0
   };
@@ -757,10 +771,10 @@ async function addBookToLibrary(b, status) {
   try {
     await postBook(payload);
     await loadBooks();
-    showToast(`"${b.title}" added to your library!`);
+    showToast(`"${b.title}" adicionado a sua biblioteca!`);
     return true;
   } catch (e) {
-    showToast('Failed to save book.');
+    showToast('Falha ao salvar livro.');
     return false;
   }
 }

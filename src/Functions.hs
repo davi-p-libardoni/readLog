@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Functions (Book(..), BookInput(..), filterByAuthor, filterByGenre, filterByRating, orderByDateRead, filterByMonthRead, filterByYearRead, pagesByMonth, pagesByYear) where
+module Functions (Book(..), BookInput(..), filterByAuthor, filterByGenre, filterByRating, filterByStatus, filterByQuery, orderByTitle, orderByAuthor, orderByRating, orderByPages, orderByDateRead, filterByMonthRead, filterByYearRead, pagesByMonth, pagesByYear) where
 
+import Data.Char (toLower)
 import Data.Aeson (FromJSON(..), ToJSON(..), object, withObject, (.:), (.=))
 import Data.List
 import Data.Ord
@@ -14,7 +15,7 @@ data Book = Book {
  author :: String, 
  releaseDate :: Int, 
  readDate :: Day,
- status :: String,
+ bStatus :: String,
  genre :: String,
  rating :: Double,
  pages :: Int
@@ -42,6 +43,37 @@ filterByGenre books g = filter (\b -> g == genre b) books
 -- filtra por avaliação | >= r
 filterByRating :: [Book] -> Double -> [Book]
 filterByRating books r = filter (\b -> rating b >= r) books
+
+-- filtra por status
+filterByStatus :: [Book] -> String -> [Book]
+filterByStatus books s = filter (\b -> s == bStatus b) books
+
+-- filtra por query (busca no nome ou autor)
+filterByQuery :: [Book] -> String -> [Book]
+filterByQuery books q = filter match books
+    where
+        lowQ = map toLower q
+        match b = lowQ `isInfixOf` map toLower (name b) || lowQ `isInfixOf` map toLower (author b)
+
+-- ordena por titulo
+orderByTitle :: [Book] -> Bool -> [Book]
+orderByTitle books True = sortBy (comparing name) books
+orderByTitle books False = sortBy (comparing (Down . name)) books
+
+-- ordena por autor
+orderByAuthor :: [Book] -> Bool -> [Book]
+orderByAuthor books True = sortBy (comparing author) books
+orderByAuthor books False = sortBy (comparing (Down . author)) books
+
+-- ordena por avaliação
+orderByRating :: [Book] -> Bool -> [Book]
+orderByRating books True = sortBy (comparing rating) books
+orderByRating books False = sortBy (comparing (Down . rating)) books
+
+-- ordena por paginas
+orderByPages :: [Book] -> Bool -> [Book]
+orderByPages books True = sortBy (comparing pages) books
+orderByPages books False = sortBy (comparing (Down . pages)) books
 
 -- ordena por data lida | variavel bool True para mais antigos False para mais recentes
 orderByDateRead :: [Book] -> Bool -> [Book]
