@@ -173,6 +173,7 @@
   <div class="filters__sort">
     <span>Ordenar por</span>
     <select id="sortSelect">
+      <option value="date" selected>Mais recentes</option>
       <option value="title">Título</option>
       <option value="author">Autor</option>
       <option value="rating">Nota</option>
@@ -470,11 +471,24 @@ function normalizeBook(b) {
 /* ─── API ─────────────────────────────────────────── */
 async function loadBooks() {
   try {
-    const res = await fetch('/books');
+    const sort = document.getElementById('sortSelect').value;
+    const author = activeAuthor; 
+    const genre = activeGenre === 'all' ? '' : activeGenre;
+    const rating = activeRating;
+
+    const params = new URLSearchParams();
+    if (sort) params.append('sort', sort);
+    if (author) params.append('author', author);
+    if (genre) params.append('genre', genre);
+    if (rating > 0) params.append('rating', rating);
+
+    const res = await fetch(`/books?${params.toString()}`);
     if (!res.ok) throw new Error('HTTP ' + res.status);
+    
     const data = await res.json();
     books = data.map(normalizeBook);
     window._books = books;
+    
     renderBooks();
     updateHero();
   } catch (e) {
@@ -524,23 +538,15 @@ function stars(n) {
 
 function renderBooks() {
   const grid = document.getElementById('bookGrid');
-  let filtered = books.filter(b => {
-    const matchFilter = activeFilter === 'all' || b.status === activeFilter;
-    const matchGenre  = activeGenre === 'all' || b.genre === activeGenre;
-    const matchRating = b.rating >= activeRating;
-    const matchAuthor = !activeAuthor || b.author.toLowerCase().includes(activeAuthor.toLowerCase());
-    const matchSearch = !searchQuery ||
-      b.title.toLowerCase().includes(searchQuery) ||
-      b.author.toLowerCase().includes(searchQuery);
-    return matchFilter && matchGenre && matchRating && matchAuthor && matchSearch;
-  });
+  
+  let filtered = books; 
 
-  const sort = document.getElementById('sortSelect').value;
-  filtered.sort((a, b) => {
-    if (sort === 'rating') return b.rating - a.rating;
-    if (sort === 'pages')  return b.pages  - a.pages;
-    if (sort === 'author') return a.author.localeCompare(b.author);
-    return a.title.localeCompare(b.title);
+  filtered = filtered.filter(b => {
+    const matchFilter = activeFilter === 'all' || b.status === activeFilter;
+    const matchSearch = !searchQuery || 
+      b.title.toLowerCase().includes(searchQuery) || 
+      b.author.toLowerCase().includes(searchQuery);
+    return matchFilter && matchSearch;
   });
 
   if (!filtered.length) {
@@ -683,7 +689,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
 });
 
 /* ─── SORT ────────────────────────────────────────── */
-document.getElementById('sortSelect').addEventListener('change', renderBooks);
+document.getElementById('sortSelect').addEventListener('change', loadBooks);
 
 /* ─── ADD BOOK MODAL ──────────────────────────────── */
 const overlay = document.getElementById('overlay');
@@ -862,7 +868,7 @@ document.querySelectorAll('[data-genre]').forEach(el => {
     document.querySelectorAll('[data-genre]').forEach(e => e.classList.remove('active'));
     el.classList.add('active');
     activeGenre = el.dataset.genre;
-    renderBooks();
+    loadBooks();
   });
 });
 
@@ -871,13 +877,13 @@ document.querySelectorAll('[data-rating]').forEach(el => {
     document.querySelectorAll('[data-rating]').forEach(e => e.classList.remove('active'));
     el.classList.add('active');
     activeRating = parseInt(el.dataset.rating);
-    renderBooks();
+    loadBooks();
   });
 });
 
 document.getElementById('authorFilter').addEventListener('input', e => {
   activeAuthor = e.target.value.trim();
-  renderBooks();
+  loadBooks();
 });
 
 /* ─── THEME ───────────────────────────────────────── */

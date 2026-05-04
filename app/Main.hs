@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import Functions (Book(..),BookInput(..),BookUpdate(..))
+import Functions
 import APICalls (searchBooks)
 import DBAccess
 
@@ -38,8 +38,29 @@ main = do
       file (staticDir ++ "/readlog.html")
 
     get "/books" $ do
-      books <- liftIO (getBooks conn)
-      json books
+      allBooks <- liftIO (getBooks conn)
+      
+      allParams <- params
+      
+      let mAuthor = fmap TL.unpack (lookup "author" allParams)
+          mGenre  = fmap TL.unpack (lookup "genre" allParams)
+          mSort   = fmap TL.unpack (lookup "sort" allParams)
+          
+          mRatingStr = fmap TL.unpack (lookup "rating" allParams)
+          mRating    = mRatingStr >>= readMaybe :: Maybe Double
+
+          filteredByAuthor = maybe allBooks (filterByAuthor allBooks) mAuthor
+          filteredByGenre  = maybe filteredByAuthor (filterByGenre filteredByAuthor) mGenre
+          filteredByRating = maybe filteredByGenre (filterByRating filteredByGenre) mRating
+          
+          sortedList = case mSort of
+            Just "author" -> orderByAuthor filteredByRating True
+            Just "rating" -> orderByRating filteredByRating False
+            Just "pages"  -> orderByPages filteredByRating False
+            Just "title"  -> orderByTitle filteredByRating True
+            _             -> orderByDateRead filteredByRating False
+            
+      json sortedList
 
     get "/book/search" $ do
       q <- (param "q" :: ActionM TL.Text)

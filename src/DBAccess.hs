@@ -7,8 +7,7 @@ import Functions (Book(..), BookInput(..), BookUpdate(..))
 
 -- Initialize database
 initDB :: Connection -> IO Int64
-initDB conn = do
-  execute_ conn
+initDB conn = execute_ conn
     "CREATE TABLE IF NOT EXISTS books \
     \ (id SERIAL PRIMARY KEY, \
     \  name TEXT NOT NULL, \
@@ -20,10 +19,6 @@ initDB conn = do
     \  rating REAL, \
     \  pages INTEGER, \
     \  current_page INTEGER DEFAULT 0)"
-  execute_ conn
-    "ALTER TABLE books ADD COLUMN IF NOT EXISTS current_page INTEGER DEFAULT 0"
-  execute_ conn
-    "ALTER TABLE books ADD COLUMN IF NOT EXISTS start_date DATE"
 
 insertBook :: Connection -> BookInput -> IO Int64
 insertBook conn book =
