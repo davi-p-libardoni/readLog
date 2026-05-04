@@ -70,9 +70,9 @@ O deploy foi relativamente tranquilo. Tive uma dificuldade com a rota do endere�
 
 ## 7. Resultado final
 
-Apresente o resultado final do trabalho, na forma de GIF animado ou vídeo curto (máximo 60s)
+<img width="1895" height="866" alt="Animação" src="https://github.com/user-attachments/assets/37904520-fe85-4ae8-bcf7-651b1ed18ad6" />
 
-Você também pode acrescentar uma breve explicação sobre o que está sendo demonstrado.
+Gif mostrando a inserção de um livro no log.
 
 ---
 
@@ -156,21 +156,8 @@ Ainda me sinto limitado quanto as mônadas. Pra ser sincero, eu consegui entende
 
 ## 9. Referências e créditos
 
+Em grande parte, aprendi sobre o framework Scotty e bibliotecas Haskell com prompts ao Claude Sonnet e Github Copilot
 
 
-Liste referências e créditos de forma detalhada, com título e URL, incluindo, quando aplicável:
-
-
-- sites consultados
-- documentações
-- materiais de aula
-- colegas
-- trechos de código adaptados
-- imagens, vídeos 
-
-Exemplo:
-
-- Documentação do Scotty: ...
-- Documentação do Render: ...
-- Material de aula da disciplina: ...
-- Vídeo sobre Scotty: ...
+Link ao repositório com commit history:
+https://github.com/davi-p-libardoni/readLog
